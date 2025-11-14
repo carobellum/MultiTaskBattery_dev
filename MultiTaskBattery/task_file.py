@@ -79,7 +79,7 @@ def make_run_file(task_list,
                   tfiles,
                   offset = 0,
                   instruction_dur = 5,
-                  task_dur = 30,
+                  task_dur = 300,
                   run_time = None,
                   keep_in_middle=None):
     """
@@ -965,10 +965,14 @@ class FingerSequence(TaskFile):
     def make_task_file(self,
                        hand = 'bimanual',
                        responses = [1,2,3,4], # 1 = Key_one, 2 = Key_two, 3 = Key_three, 4 = Key_four
-                       task_dur= 10,
+                       task_dur= 300,
                        trial_dur=3.25,
                        iti_dur=0.5,
                        length_sequence = 7,
+<<<<<<< Updated upstream
+=======
+                       run_number= None,
+>>>>>>> Stashed changes
                        file_name=None):
         n_trials = int(np.floor(task_dur / (trial_dur + iti_dur)))
         trial_info = []
@@ -987,7 +991,11 @@ class FingerSequence(TaskFile):
             trial['iti_dur'] = iti_dur
             trial['display_trial_feedback'] = True
             # choose random sequence
+<<<<<<< Updated upstream
             trial['stim'] = self.generate_sequence(length_sequence)
+=======
+            trial['stim'] = self.generate_sequence(length_sequence = length_sequence)
+>>>>>>> Stashed changes
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
             trial_info.append(trial)
@@ -1204,8 +1212,8 @@ class SemanticPrediction(TaskFile):
                        responses = [1,2], # 1 = True, 2 = False
                        run_number=None,
                        task_dur=300,
-                       trial_dur=15,
-                       sentence_dur=2,
+                       trial_dur=7.5,
+                       question_dur=2,
                        file_name=None,
                        stim_file=None):
 
@@ -1229,16 +1237,17 @@ class SemanticPrediction(TaskFile):
             trial['key_false'] = responses[1]
             trial['trial_num'] = n
             trial['hand'] = hand
+            trial['condition'] = stim['cloze_descript'][n]
             trial['trial_dur'] = trial_dur
-            trial['sentence_dur'] = sentence_dur
+            trial['question_dur'] = question_dur
             trial['sentence'] = stim['sentence'][n]
             trial['trial_type'] = random.choice([0,1])
             last_word = [stim['wrong_word'][n], stim['right_word'][n]]
             trial['last_word'] = last_word[trial['trial_type']]
             trial['display_trial_feedback'] = True
             trial['start_time'] = t
-            trial['end_time'] = t + trial_dur
-
+            trial['end_time'] = t + trial['trial_dur']
+            #trial['end_time'] = t + (len(trial['sentence'].split('|'))*0.5) + 0.5 + trial['question_dur']
             trial_info.append(trial)
 
             # Update for next trial:
@@ -1725,7 +1734,7 @@ class FauxPas(TaskFile):
     def make_task_file(self, hand='right',
                        responses = [1,2], # 1 = True, 2 = False
                        run_number=None,
-                       task_dur=30,
+                       task_dur=300,
                        trial_dur=14,
                        iti_dur=1,
                        story_dur=10,

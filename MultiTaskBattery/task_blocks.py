@@ -1422,8 +1422,13 @@ class SemanticPrediction(Task):
             word_stim = visual.TextStim(self.window, text=word, pos=(0.0, 0.0), color=(-1, -1, -1), units='deg', height=height_word)
             word_stim.draw()
             self.window.flip()
-            self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.8)
+            self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.5)
 
+        event.clearEvents()
+
+        # Fixation cross
+        self.screen.fixation_cross()
+        self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.5)
         event.clearEvents()
 
         # Display last word
@@ -1434,7 +1439,7 @@ class SemanticPrediction(Task):
         event.clearEvents()
 
         # collect responses 0: no response 1-4: key pressed
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['sentence_dur'])
+        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['question_dur'])
         trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
 
         # display trial feedback
@@ -2231,9 +2236,7 @@ class FauxPas(Task):
 
         # collect responses 0: no response 1-4: key pressed
         trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(),
-                                                           trial['question_dur'],
-                                                           show_last_seconds=3,
-                                                           current_stimuli=question_stim)
+                                                           trial['question_dur'])
         trial['correct'] = (trial['response'] == trial['trial_type'])
 
 
