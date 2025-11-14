@@ -969,10 +969,7 @@ class FingerSequence(TaskFile):
                        trial_dur=3.25,
                        iti_dur=0.5,
                        length_sequence = 7,
-<<<<<<< Updated upstream
-=======
                        run_number= None,
->>>>>>> Stashed changes
                        file_name=None):
         n_trials = int(np.floor(task_dur / (trial_dur + iti_dur)))
         trial_info = []
@@ -991,11 +988,7 @@ class FingerSequence(TaskFile):
             trial['iti_dur'] = iti_dur
             trial['display_trial_feedback'] = True
             # choose random sequence
-<<<<<<< Updated upstream
-            trial['stim'] = self.generate_sequence(length_sequence)
-=======
             trial['stim'] = self.generate_sequence(length_sequence = length_sequence)
->>>>>>> Stashed changes
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
             trial_info.append(trial)
