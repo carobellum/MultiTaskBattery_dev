@@ -247,7 +247,50 @@ class VerbGeneration(TaskFile):
             trial_info.to_csv(self.task_dir / self.name / file_name,sep='\t',index=False)
 
         return trial_info
+class VerbGenerationAuditory(TaskFile):
+    def __init__(self, const):
+        super().__init__(const)
+        self.name = 'verb_generation_auditory'
 
+    def make_task_file(self,
+                       task_dur=30,
+                       trial_dur=6,
+                       iti_dur=0.0,
+                       run_number = None,
+                       file_name=None):
+
+        n_trials = int(np.floor(task_dur / (trial_dur + iti_dur)))
+        trial_info = []
+        t = 0
+
+        audio_dir = self.stim_dir / self.name
+        audio_files = sorted(audio_dir.glob('*.wav'))  # list of Path objects
+        # optional: randomize order
+        audio_files = list(audio_files)
+        random.shuffle(audio_files)
+
+        audio_files = audio_files[:n_trials]
+
+        for n in range(n_trials):
+            trial = {}
+            trial['trial_num'] = n
+            trial['trial_dur'] = trial_dur
+            trial['iti_dur'] = iti_dur
+            trial['display_trial_feedback'] = False
+            trial['stim'] = audio_files[n].name
+            trial['word'] = audio_files[n].stem
+            trial['start_time'] = t
+            trial['end_time'] = t + trial_dur + iti_dur
+            trial_info.append(trial)
+            t = trial['end_time']
+
+        trial_info = pd.DataFrame(trial_info)
+        if file_name is not None:
+            ut.dircheck(self.task_dir / self.name)
+            trial_info.to_csv(self.task_dir / self.name / file_name,
+                              sep='\t', index=False)
+
+        return trial_info
 class TongueMovement(TaskFile):
     def __init__(self, const):
         super().__init__(const)
@@ -912,9 +955,9 @@ class FingerSequence(TaskFile):
         self.name = 'finger_sequence'
         self.matching_stimuli = False # sequence of numbers are different for easy and hard sequence condition
 
-    def generate_sequence(self):
+    def generate_sequence(self, length_sequence):
         sequence = [random.choice([1, 2, 3, 4])]
-        while len(sequence) < 6:
+        while len(sequence) < length_sequence:
             next_digit = random.choice([d for d in [1, 2, 3, 4] if d != sequence[-1]])
             sequence.append(next_digit)
         return ' '.join(map(str, sequence))
@@ -925,6 +968,7 @@ class FingerSequence(TaskFile):
                        task_dur= 10,
                        trial_dur=3.25,
                        iti_dur=0.5,
+                       length_sequence = 7,
                        file_name=None):
         n_trials = int(np.floor(task_dur / (trial_dur + iti_dur)))
         trial_info = []
@@ -943,7 +987,7 @@ class FingerSequence(TaskFile):
             trial['iti_dur'] = iti_dur
             trial['display_trial_feedback'] = True
             # choose random sequence
-            trial['stim'] = self.generate_sequence()
+            trial['stim'] = self.generate_sequence(length_sequence)
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
             trial_info.append(trial)
@@ -1727,8 +1771,8 @@ class FauxPas(TaskFile):
 
         for n in range(n_trials):
             trial = {}
-            trial['key_yes'] = responses[0]
-            trial['key_no'] = responses[1]
+            trial['key_one'] = responses[0]
+            trial['key_two'] = responses[1]
             trial['trial_num'] = n
             trial['hand'] = hand
             trial['trial_dur'] = trial_dur

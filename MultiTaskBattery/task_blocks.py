@@ -341,6 +341,47 @@ class VerbGeneration(Task):
         # display trial feedback
         self.display_trial_feedback(give_feedback= trial['display_trial_feedback'], correct_response = None)
         return trial
+class VerbGenerationAuditory(Task):
+    def __init__(self, info, screen, ttl_clock, const, subj_id):
+        super().__init__(info, screen, ttl_clock, const, subj_id)
+
+    def init_task(self):
+        trial_info_file = self.const.task_dir / self.name / self.task_file
+        self.trial_info = pd.read_csv(trial_info_file, sep='\t')
+
+    def display_instructions(self):
+        self.instruction_text = (
+            f"{self.descriptive_name} Task\n\n"
+            "You will hear words through the headphones.\n\n"
+            "For each word, silently think of verbs that go with the word until the fixation cross turns red"
+        )
+        instr_visual = visual.TextStim(
+            self.window,
+            text=self.instruction_text,
+            height=self.const.instruction_text_height,
+            color=[-1, -1, -1]
+        )
+        instr_visual.draw()
+        self.window.flip()
+
+    def run_trial(self, trial):
+        t0 = self.ttl_clock.get_time()
+        self.screen.fixation_cross()
+
+        audio_path = self.const.stim_dir / self.name / trial['stim']
+        audio_stim = sound.Sound(str(audio_path))
+        audio_dur = audio_stim.getDuration()   # duration of this specific file (s)
+        audio_stim.play()
+        t_audio_end = t0 + audio_dur
+
+        self.ttl_clock.wait_until(t_audio_end + 3.0) # 2) Thinking period: 3 seconds after the end of the audio
+        self.screen.fixation_cross(color = 'red')
+
+
+        self.ttl_clock.wait_until(t0 + trial['trial_dur'])
+        self.display_trial_feedback(give_feedback=trial['display_trial_feedback'], correct_response=None)
+
+        return trial
 
 class TongueMovement(Task):
     """
@@ -2141,7 +2182,7 @@ class FauxPas(Task):
         Initialize task - default is to read the target information into the trial_info dataframe
         """
         self.trial_info = pd.read_csv(self.const.task_dir / self.name / self.task_file, sep='\t')
-        self.corr_key = [self.trial_info['key_yes'].iloc[0],self.trial_info['key_no'].iloc[0]]
+        self.corr_key = [self.trial_info['key_one'].iloc[0],self.trial_info['key_two'].iloc[0]]
 
 
     def display_instructions(self):

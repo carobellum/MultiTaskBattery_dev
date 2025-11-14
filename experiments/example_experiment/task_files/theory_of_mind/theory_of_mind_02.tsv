@@ -1,9 +1,77 @@
 key_true	key_false	trial_type	trial_num	hand	trial_dur	iti_dur	story	question	condition	answer	story_dur	question_dur	display_trial_feedback	start_time	end_time
-1	2	1	0	right	14	1	The morning of high school dance Sarah placed her high heel shoes under her  dress and then went shopping. That  afternoon, her sister borrowed the shoes and later put them under Sarah's bed.	"Sarah gets ready assuming her 
-shoes are under the dress.
+1	2	1	0	right	14	1	When they were children, Paul and Tom  would swing on the trees in their garden.  By the time they were teenagers, all of the trees had been chopped down.	"Today, there are no more trees
+in the garden
 
-True or False "	belief	True	10	4	True	0	15
-1	2	1	1	right	14	1	Sargent famously painted the south bank of  the river in 1885. In 1910 a huge dam was  built, flooding out the whole river basin,  killing the old forests. Now the whole area  is under water.	"In the painting the south bank of 
-the river is wooded. 
+True or False"	belief	True	10	4	True	0	15
+1	2	0	1	right	14	1	Jessie leaves her chemistry book at home. Her mother, knowing that she has a chemistry exam that afternoon, brings it to school and leaves it in Jessie's locker. 	"Jessie opens her schoolbag and takes
+out the chemistry book
 
-True or False "	photo	True	10	4	True	15	30
+True or False"	photo	False	10	4	True	15	30
+1	2	0	2	right	14	1	In 2000, when the schoolhouse opened, there were two classrooms and two teachers. Now, there are twenty teachers and ten classrooms to accommodate the influx of young families to the area.	"Today, there are only two classrooms
+in the schoolhouse
+
+True or False"	belief	False	10	4	True	30	45
+1	2	0	3	right	14	1	In the photograph, the young girl has long blond hair that cascades down her back.  Today, she has black hair that falls at her shoulders. 	"Childhood pictures show the 
+girl with short black hair
+
+True or False"	photo	False	10	4	True	45	60
+1	2	1	4	right	14	1	Jennifer went to the theme park when  it first opened and spent hours  on the rides. A year ago, unbeknownst to Jennifer, the park  closed due to lack of funding.	"Jennifer goes to the park to
+find that it has closed
+
+True or False"	belief	True	10	4	True	60	75
+1	2	1	5	right	14	1	Alice arrives at the movie theater at 6PM for her date with Juan. There is no sign of him so she leaves after 30 minutes. Thinking that the movie starts at 7PM, Juan arrives with ten minutes to spare.	"Juan arrives and doesn't see Alice
+
+True or False"	photo	True	10	4	True	75	90
+1	2	0	6	right	14	1	After a morning of sunbathing, Leslie  leaves her book on the sunchair expecting to return after lunch. Her mother notices that rainclouds are gathering and brings  the book inside. 	"Leslie returns later and 
+finds the book soaking wet
+
+True or False"	belief	False	10	4	True	90	105
+1	2	0	7	right	14	1	The professor sends an email to the  class the night before to postpone the midterm exam. John does not receive the email. 	"John sits the exam the next day
+and gets a good grade
+
+True or False"	photo	False	10	4	True	105	120
+1	2	1	8	right	14	1	Maria wakes up early to study at the library. Her housemates notice that she is not at breakfast and presume that she is sleeping	"In fact, Maria is studying in the library
+
+True or False"	belief	True	10	4	True	120	135
+1	2	0	9	right	14	1	The autobiography of the actor depicts a prosperous and extravagant  lifestyle. Soon after the book is  written the actor loses his fortune. 	"In the autobiography, the actor is 
+depicted as destitute and broke
+
+True or False"	photo	False	10	4	True	135	150
+1	2	1	10	right	14	1	Sarah texts Paul to let him know that she will miss dinner  because she is working late. Paul  has lost his phone and does not get her message. 	"Paul expects Sarah to be home for dinner
+
+True or False"	belief	True	10	4	True	150	165
+1	2	1	11	right	14	1	In her prom picture, Laura has braces on her teeth and long  blond hair. Soon after the picture  was taken, Laura's braces were removed	"Today, Laura has straight teeth
+and long blond hair
+
+True or False"	photo	True	10	4	True	165	180
+1	2	0	12	right	14	1	Michael told Andrew that he was going hiking for the day. An hour  into his walk, Michael hurts his leg and returns home	"Michael returns home that evening 
+after a long day of hiking
+
+True or False"	belief	False	10	4	True	180	195
+1	2	1	13	right	14	1	Tom leaves the house without letting  the dog out. Tom's neighbour hears  the dog barking and lets her into  the backyard.  Later, Tom arrives home from work. 	"Tom finds the dog in the backyard
+
+True or False"	photo	True	10	4	True	195	210
+1	2	0	14	right	14	1	Amy leaves her sister in the library while she goes to class. Sometime thereafter, Amy's sister leaves the library to meet her friend on the other side of town. 	"Amy returns after class and 
+finds her sister in the library
+
+True or False"	belief	False	10	4	True	210	225
+1	2	0	15	right	14	1	Paintings of the town in the early nineteenth century portray a bustling marketplace in the town square. In recent  years, the town square has been ruined by warfare. 	"Paintings of the town square depict 
+ruins obliterated by warfare
+
+True or False"	photo	False	10	4	True	225	240
+1	2	0	16	right	14	1	Annie tells Carl that she has to work late.  Instead, Annie arrives home before Carl to  surprise him for his birthday. Carl goes  out with his friends straight after work, arriving home late. 	"Annie knows that Carl
+is out with his friends
+
+True or False"	belief	False	10	4	True	240	255
+1	2	1	17	right	14	1	The professor asked his graduate student to present her work at a conference.  The student is sick on the day of the conference and she asks a  colleague to present the work instead. 	"The professor's graduate student 
+does not give the presentation
+
+True or False"	photo	True	10	4	True	255	270
+1	2	1	18	right	14	1	Sophie tells her mother that her train  from Budapest is arriving at 8PM in  Vienna. Sophie confuses the platform numbers and boards the train  to Prague without realising her mistake.	"Sophie arrives at the station 
+in Prague does not see her mother
+
+True or False"	belief	True	10	4	True	270	285
+1	2	1	19	right	14	1	An old photograph of the public library portrays a red-brick building with green ivy creeping up the side. Soon after the photograph was taken, the building was  demolished and the site was left derelict	"A photograph taken today shows
+an empty site
+
+True or False"	photo	True	10	4	True	285	300
