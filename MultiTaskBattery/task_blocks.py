@@ -479,7 +479,6 @@ class FingerRhythmic(Task):
         event.clearEvents()
         clk = self.ttl_clock.clock
         t0 = clk.getTime()                    # trial anchor (TTL)
-
         beep = sound.Sound(1000, secs=0.05)
 
         # --- Play FIRST tone now, then use THIS time as the grid anchor
@@ -499,14 +498,14 @@ class FingerRhythmic(Task):
                     beep.play()
                     break
                 res = event.waitKeys(maxWait=deadline - now,
-                                     keyList=self.const.response_keys,
+                                     keyList= self.const.response_keys,
                                      timeStamped=clk)
                 if res:
                     for _, ts in res:
                         taps_rel.append(ts - t0)
 
         # --- Silent phase: collect until absolute end_time
-        end_abs = float(trial['end_time'])
+        end_abs = t0 + float(trial['trial_dur'])
         while True:
             now = clk.getTime()
             if now >= end_abs:
@@ -1446,7 +1445,74 @@ class SemanticPrediction(Task):
         self.display_trial_feedback(trial['display_trial_feedback'], trial['correct'])
 
         return trial
+class SemanticPredictionUltra(Task):
 
+    """
+    Read a sentence and decide if the last word of the sentence makes sense.
+    Click "1" if the last word makes sense; click "2" if not. Be as accurate and fast as possible.
+    Specific version of Semantic Prediction Task for the Oxford cerebellum ultrasound study.
+    """
+
+    def __init__(self, info, screen, ttl_clock, const, subj_id):
+        super().__init__(info, screen, ttl_clock, const, subj_id)
+        self.feedback_type = 'acc+rt'
+
+    def init_task(self):
+        """
+        Initialize task - default is to read the target information into the trial_info dataframe
+        """
+        self.trial_info = pd.read_csv(self.const.task_dir / self.name / self.task_file, sep='\t')
+        self.corr_key = [self.trial_info['key_false'].iloc[0],self.trial_info['key_true'].iloc[0]]
+
+    def display_instructions(self):
+        """
+        displays the instruction for the task
+        """
+        str1 = f"You will read a sentence and decide if the last word makes sense."
+        str2 = f"If it makes sense, press {self.corr_key[1]}"
+        str3 = f"if it doesn't make sense, press {self.corr_key[0]}"
+        self.instruction_text = f"{self.descriptive_name} Task\n\n {str1} \n {str2} \n {str3}"
+        instr_visual = visual.TextStim(self.window, text=self.instruction_text, height=self.const.instruction_text_height, color=[-1, -1, -1])
+        instr_visual.draw()
+        self.window.flip()
+
+    def run_trial(self, trial):
+        """ Runs a single trial of the semantic prediction task """
+
+        height_word = 2
+        event.clearEvents()
+        sentence = trial['sentence'] # get sentence and split into words by space
+        words = sentence.split('|')
+
+        #show words sequentially each for 500ms
+        for word in words:
+            word_stim = visual.TextStim(self.window, text=word, pos=(0.0, 0.0), color=(-1, -1, -1), units='deg', height=height_word)
+            word_stim.draw()
+            self.window.flip()
+            self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.5)
+
+        event.clearEvents()
+
+        # Fixation cross
+        self.screen.fixation_cross()
+        self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.5)
+        event.clearEvents()
+
+        # Display last word
+        last_word_stim = visual.TextStim(self.window, text=trial['last_word'], pos=(0.0, 0.0), color=(-1, -1, -1), units='deg', height= height_word, wrapWidth=30)
+        last_word_stim.draw()
+        self.window.flip()
+
+        event.clearEvents()
+
+        # collect responses 0: no response 1-4: key pressed
+        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['question_dur'])
+        trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
+
+        # display trial feedback
+        self.display_trial_feedback(trial['display_trial_feedback'], trial['correct'])
+
+        return trial
 class VisualSearch(Task):
 
     """

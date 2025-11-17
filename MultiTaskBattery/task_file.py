@@ -79,7 +79,7 @@ def make_run_file(task_list,
                   tfiles,
                   offset = 0,
                   instruction_dur = 5,
-                  task_dur = 300,
+                  task_dur = 35,
                   run_time = None,
                   keep_in_middle=None):
     """
@@ -1010,7 +1010,7 @@ class FingerRhythmic(TaskFile):
                        hand='right',
                        responses=[1],
                        run_number= None,
-                       task_dur = 70,
+                       task_dur = 35,
                        trial_dur=35, # 2 sec trial start text, 27.95 sec tone train, ~5 sec buffer
                        iti_dur=0,
                        file_name=None):
@@ -1240,7 +1240,6 @@ class SemanticPrediction(TaskFile):
             trial['display_trial_feedback'] = True
             trial['start_time'] = t
             trial['end_time'] = t + trial['trial_dur']
-            #trial['end_time'] = t + (len(trial['sentence'].split('|'))*0.5) + 0.5 + trial['question_dur']
             trial_info.append(trial)
 
             # Update for next trial:
@@ -1250,6 +1249,89 @@ class SemanticPrediction(TaskFile):
         if file_name is not None:
             trial_info.to_csv(self.task_dir / self.name / file_name, sep='\t', index=False)
         return trial_info
+
+class SemanticPredictionUltra(TaskFile):
+    def __init__(self, const):
+        super().__init__(const)
+        self.name = 'semantic_prediction_ultra'
+
+    def make_task_file(self, hand='right',
+                       responses=[1, 2],  # 1 = True, 2 = False
+                       run_number=None,
+                       task_dur=45,
+                       trial_dur=7.5,
+                       question_dur=2,
+                       file_name=None,
+                       stim_file=None,
+                       version='opmmeg'):
+        """
+        version: 'opmmeg' or 'ultrasound'
+        """
+
+        trial_info = []
+        t = 0
+        if stim_file is not None:
+            stim = pd.read_csv(stim_file)
+        else:
+            if version == 'opmmeg': stim = pd.read_csv(self.stim_dir / 'semantic_prediction_ultra' / 'semantic_prediction_opmmeg.csv')
+            elif version == 'ultrasound': stim = pd.read_csv(self.stim_dir / 'semantic_prediction_ultra' / 'semantic_predictability_ultrasound.csv')
+            else:
+                raise ValueError(f"Unknown version: {version}")
+
+        rng = np.random.RandomState(run_number or 0)
+        n_trials = int(np.floor(task_dur / trial_dur))
+
+        # One random row per Sentence (no sentence in multiple conditions)
+        stim_unique = (stim.groupby('Sentence', group_keys=False).sample(n=1, random_state=rng.randint(0, 10**9)))
+
+        # Balance depending on version
+        if version == 'opmmeg':
+            # 3 conditions: Predictable, Meaningless, Switching (assumed)
+            assert n_trials % 3 == 0, "n_trials must be divisible by 3 for 'opmmeg'."
+            per_cond = n_trials // 3
+
+            stim_run = (stim_unique.groupby('Condition', group_keys=False).sample(n=per_cond, random_state=rng.randint(0, 10**9))
+                .sample(frac=1, random_state=rng.randint(0, 10**9)).reset_index(drop=True))
+
+        elif version == 'ultrasound':
+            # 2 Predictabilities (High/Low) × 3 Conditions = 6 cells
+            assert n_trials % 6 == 0, "n_trials must be divisible by 6 for 'ultrasound'."
+            per_cell = n_trials // 6  # trials per (Predictability x Condition)
+            # balance across Predictability x Condition
+            stim_run = (stim_unique.groupby(['Predictability', 'Condition'], group_keys=False).sample(n=per_cell, random_state=rng.randint(0, 10**9))
+                .sample(frac=1, random_state=rng.randint(0, 10**9)).reset_index(drop=True))
+        else:
+            raise ValueError(f"Unknown version: {version}")
+
+        for n, row in stim_run.iterrows():
+            trial = {}
+            trial['key_true'] = responses[0]
+            trial['key_false'] = responses[1]
+            trial['trial_num'] = n
+            trial['hand'] = hand
+            trial['condition'] = row['Condition']
+            trial['trial_dur'] = trial_dur
+            trial['question_dur'] = question_dur
+            # For ultrasound version, also store predictability
+            if version == 'ultrasound':
+                trial['predictability'] = row['Predictability']
+            trial['sentence'] = ('|'.join(row['Sentence'].split()[:-1] or row['Sentence'].split())
+                if version == 'opmmeg'
+                else '|'.join(row['Sentence'].split()))
+            trial['last_word'] = row['last_word']
+            trial['trial_type'] = int(row['Condition'] != 'Meaningless')
+            trial['display_trial_feedback'] = True
+            trial['start_time'] = t
+            trial['end_time'] = t + trial_dur
+            trial_info.append(trial)
+            t = trial['end_time']
+
+        trial_info = pd.DataFrame(trial_info)
+        if file_name is not None:
+            trial_info.to_csv(self.task_dir / self.name / file_name,
+                              sep='\t', index=False)
+        return trial_info
+
 
 class VisualSearch(TaskFile):
     def __init__(self, const):

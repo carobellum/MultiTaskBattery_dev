@@ -1,0 +1,541 @@
+Index,Sentence,Modified_sentence,Number_of_Unique_Responses,Response_Entropy,Highest_Response_Percent,word_count,Condition,Switching,Predictable,Meaningless,last_word,word_freq,letters_last
+1,"After filling the bowl with cereal, Josh added salt",no,5,0.8,0.87,9,Switching,salt,milk,anger,salt,25320518,4
+1,"After filling the bowl with cereal, Josh added anger",no,5,0.8,0.87,9,Meaningless,salt,milk,anger,anger,7991036,5
+1,"After filling the bowl with cereal, Josh added milk",no,5,0.8,0.87,9,Predictable,salt,milk,anger,milk,20955909,4
+2,The hiker's new boots were stuck in the deep hole,no,7,0.8,0.89,10,Switching,hole,mud,branch,hole,26199070,4
+2,The hiker's new boots were stuck in the deep branch,no,7,0.8,0.89,10,Meaningless,hole,mud,branch,branch,36712083,6
+2,The hiker's new boots were stuck in the deep mud,no,7,0.8,0.89,10,Predictable,hole,mud,branch,mud,5915017,3
+3,"In the courtroom, the defendant was silenced by the evidence",no,10,1.11,0.85,10,Switching,evidence,judge,apple,evidence,62012277,8
+3,"In the courtroom, the defendant was silenced by the apple",no,10,1.11,0.85,10,Meaningless,evidence,judge,apple,apple,50551171,5
+3,"In the courtroom, the defendant was silenced by the judge",no,10,1.11,0.85,10,Predictable,evidence,judge,apple,judge,30905832,5
+4,The little girl tripped and immediately began to bleed,no,6,0.69,0.9,9,Switching,bleed,cry,ask,bleed,1989071,5
+4,The little girl tripped and immediately began to ask,no,6,0.69,0.9,9,Meaningless,bleed,cry,ask,ask,106400213,3
+4,The little girl tripped and immediately began to cry,no,6,0.69,0.9,9,Predictable,bleed,cry,ask,cry,11624610,3
+5,Mia left the theater looking like she had seen a murderer,no,5,0.32,0.96,11,Switching,murderer,ghost,banana,murderer,1268134,8
+5,Mia left the theater looking like she had seen a banana,no,5,0.32,0.96,11,Meaningless,murderer,ghost,banana,banana,5567941,6
+5,Mia left the theater looking like she had seen a ghost,no,5,0.32,0.96,11,Predictable,murderer,ghost,banana,ghost,14490042,5
+6,The new president believed no one should live in sin,yes,10,0.82,0.9,10,Switching,sin,poverty,baseball,sin,17939608,3
+6,The new president believed no one should live in baseball,yes,10,0.82,0.9,10,Meaningless,sin,poverty,baseball,baseball,35068361,8
+6,The new president believed no one should live in poverty,yes,10,0.82,0.9,10,Predictable,sin,poverty,baseball,poverty,19430836,7
+7,With no road between the islands you'll need a guide,no,10,1.29,0.8,10,Switching,guide,boat,bill,guide,213378807,5
+7,With no road between the islands you'll need a bill,no,10,1.29,0.8,10,Meaningless,guide,boat,bill,bill,98494166,4
+7,With no road between the islands you'll need a boat,no,10,1.29,0.8,10,Predictable,guide,boat,bill,boat,34104031,4
+8,"The night before his vacation, Carlos still had to bathe",no,8,1.01,0.84,10,Switching,bathe,pack,blink,bathe,494252,5
+8,"The night before his vacation, Carlos still had to blink",no,8,1.01,0.84,10,Meaningless,bathe,pack,blink,blink,5257629,5
+8,"The night before his vacation, Carlos still had to pack",no,8,1.01,0.84,10,Predictable,bathe,pack,blink,pack,52556205,4
+9,In the loud restaurant it was hard to relax,no,7,0.91,0.84,9,Switching,relax,hear,blow,relax,8856944,5
+9,In the loud restaurant it was hard to blow,no,7,0.91,0.84,9,Meaningless,relax,hear,blow,blow,31344495,4
+9,In the loud restaurant it was hard to hear,no,7,0.91,0.84,9,Predictable,relax,hear,blow,hear,47426506,4
+10,The personal trainer took a job at the local grocery,no,7,0.75,0.9,10,Switching,grocery,gym,bomb,grocery,9699375,7
+10,The personal trainer took a job at the local bomb,no,7,0.75,0.9,10,Meaningless,grocery,gym,bomb,bomb,10028218,4
+10,The personal trainer took a job at the local gym,no,7,0.75,0.9,10,Predictable,grocery,gym,bomb,gym,9872500,3
+11,The chef sprayed the cooking spray onto the floor,no,8,0.62,0.92,9,Switching,floor,pan,book,floor,53759851,5
+11,The chef sprayed the cooking spray onto the book,no,8,0.62,0.92,9,Meaningless,floor,pan,book,book,330959949,4
+11,The chef sprayed the cooking spray onto the pan,no,8,0.62,0.92,9,Predictable,floor,pan,book,pan,21810838,3
+12,They waited for a windy day to use their sails,no,8,0.96,0.86,10,Switching,sails,kite,bowl,sails,1601569,5
+12,They waited for a windy day to use their bowl,no,8,0.96,0.86,10,Meaningless,sails,kite,bowl,bowl,22118861,4
+12,They waited for a windy day to use their kite,no,8,0.96,0.86,10,Predictable,sails,kite,bowl,kite,2808067,4
+13,The gentleman on the bus offered the child his snack,no,12,0.87,0.9,10,Switching,snack,seat,brain,snack,3847152,5
+13,The gentleman on the bus offered the child his brain,no,12,0.87,0.9,10,Meaningless,snack,seat,brain,brain,33612784,5
+13,The gentleman on the bus offered the child his seat,no,12,0.87,0.9,10,Predictable,snack,seat,brain,seat,29066336,4
+14,The teacher was afraid of germs and getting dirty,no,8,0.62,0.92,9,Switching,dirty,sick,brave,dirty,16101662,5
+14,The teacher was afraid of germs and getting brave,no,8,0.62,0.92,9,Meaningless,dirty,sick,brave,brave,5221356,5
+14,The teacher was afraid of germs and getting sick,no,8,0.62,0.92,9,Predictable,dirty,sick,brave,sick,15965297,4
+15,"Cecilia had trouble keeping time, so she got a warning",no,6,0.77,0.88,10,Switching,warning,watch,bread,warning,58498692,7
+15,"Cecilia had trouble keeping time, so she got a bread",no,6,0.77,0.88,10,Meaningless,warning,watch,bread,bread,13575360,5
+15,"Cecilia had trouble keeping time, so she got a watch",no,6,0.77,0.88,10,Predictable,warning,watch,bread,watch,92006970,5
+16,The box landed on the ground with a dull impact,no,14,1.19,0.85,10,Switching,impact,thud,bride,impact,61017528,6
+16,The box landed on the ground with a dull bride,no,14,1.19,0.85,10,Meaningless,impact,thud,bride,bride,8650665,5
+16,The box landed on the ground with a dull thud,no,14,1.19,0.85,10,Predictable,impact,thud,bride,thud,392615,4
+17,He called home from college saying he'd met a mate,no,8,0.95,0.86,10,Switching,mate,girl,broom,mate,9732445,4
+17,He called home from college saying he'd met a broom,no,8,0.95,0.86,10,Meaningless,mate,girl,broom,broom,1312361,5
+17,He called home from college saying he'd met a girl,no,8,0.95,0.86,10,Predictable,mate,girl,broom,girl,89139125,4
+18,"In the evening, grandpa smokes using his bong",no,5,0.32,0.96,8,Switching,bong,pipe,shoe,bong,1074219,4
+18,"In the evening, grandpa smokes using his shoe",no,5,0.32,0.96,8,Meaningless,bong,pipe,shoe,shoe,16342426,4
+18,"In the evening, grandpa smokes using his pipe",no,5,0.32,0.96,8,Predictable,bong,pipe,shoe,pipe,16178319,4
+19,Delia needed her keys and rummaged around in her apartment,no,9,1.21,0.8,10,Switching,apartment,purse,budget,apartment,30771172,9
+19,Delia needed her keys and rummaged around in her budget,no,9,1.21,0.8,10,Meaningless,apartment,purse,budget,budget,59106421,6
+19,Delia needed her keys and rummaged around in her purse,no,9,1.21,0.8,10,Predictable,apartment,purse,budget,purse,5488891,5
+20,The little girl knew her friend had told a joke,no,4,0.68,0.89,10,Switching,joke,lie,bus,joke,9043968,4
+20,The little girl knew her friend had told a bus,no,4,0.68,0.89,10,Meaningless,joke,lie,bus,bus,41043865,3
+20,The little girl knew her friend had told a lie,no,4,0.68,0.89,10,Predictable,joke,lie,bus,lie,13533542,3
+21,Ariel was fired and desperately needed a drink,no,4,0.3,0.96,8,Switching,drink,job,button,drink,29254937,5
+21,Ariel was fired and desperately needed a button,no,4,0.3,0.96,8,Meaningless,drink,job,button,button,66811153,6
+21,Ariel was fired and desperately needed a job,no,4,0.3,0.96,8,Predictable,drink,job,button,job,177706929,3
+22,Martha covered the boiling pot with a cloth,no,7,0.81,0.88,8,Switching,cloth,lid,cab,cloth,9764137,5
+22,Martha covered the boiling pot with a cab,no,7,0.81,0.88,8,Meaningless,cloth,lid,cab,cab,9268943,3
+22,Martha covered the boiling pot with a lid,no,7,0.81,0.88,8,Predictable,cloth,lid,cab,lid,5776418,3
+23,The committed scientist spent hours working in the field,no,7,0.82,0.88,9,Switching,field,lab,call,field,135289140,5
+23,The committed scientist spent hours working in the call,no,7,0.82,0.88,9,Meaningless,field,lab,call,call,199608869,4
+23,The committed scientist spent hours working in the lab,no,7,0.82,0.88,9,Predictable,field,lab,call,lab,35525966,3
+24,"At the show, all the animals jumped through a window",no,6,0.46,0.94,10,Switching,window,hoop,city,window,102711715,6
+24,"At the show, all the animals jumped through a city",no,6,0.46,0.94,10,Meaningless,window,hoop,city,city,390564835,4
+24,"At the show, all the animals jumped through a hoop",no,6,0.46,0.94,10,Predictable,window,hoop,city,hoop,2310001,4
+25,Jim prefers funny movies that make him think,no,4,0.3,0.96,8,Switching,think,laugh,clean,think,217856550,5
+25,Jim prefers funny movies that make him clean,no,4,0.3,0.96,8,Meaningless,think,laugh,clean,clean,45381752,5
+25,Jim prefers funny movies that make him laugh,no,4,0.3,0.96,8,Predictable,think,laugh,clean,laugh,9822471,5
+26,The employee learned to work with people she didn't respect,no,6,0.65,0.9,10,Switching,respect,like,close,respect,48329678,7
+26,The employee learned to work with people she didn't close,no,6,0.65,0.9,10,Meaningless,respect,like,close,close,107853068,5
+26,The employee learned to work with people she didn't like,no,6,0.65,0.9,10,Predictable,respect,like,close,like,520585287,4
+27,The boxer knew that tonight he had to lose,no,5,0.75,0.86,9,Switching,lose,win,cloud,lose,24136984,4
+27,The boxer knew that tonight he had to cloud,no,5,0.75,0.86,9,Meaningless,lose,win,cloud,cloud,11337220,5
+27,The boxer knew that tonight he had to win,no,5,0.75,0.86,9,Predictable,lose,win,cloud,win,65264239,3
+28,Ollie was tired of the radio playing the same way,no,7,1.01,0.84,10,Switching,way,songs,coal,way,305515604,3
+28,Ollie was tired of the radio playing the same coal,no,7,1.01,0.84,10,Meaningless,way,songs,coal,coal,11625191,4
+28,Ollie was tired of the radio playing the same songs,no,7,1.01,0.84,10,Predictable,way,songs,coal,songs,49272598,5
+29,After she bought the dress she ripped off its lace,no,11,1.31,0.81,10,Switching,lace,tag,kitten,lace,7436281,4
+29,After she bought the dress she ripped off its kitten,no,11,1.31,0.81,10,Meaningless,lace,tag,kitten,kitten,3048546,6
+29,After she bought the dress she ripped off its tag,no,11,1.31,0.81,10,Predictable,lace,tag,kitten,tag,32432108,3
+30,Jacob went to buy a gallon of tea,no,8,1.15,0.81,8,Switching,tea,milk,code,tea,27406794,3
+30,Jacob went to buy a gallon of code,no,8,1.15,0.81,8,Meaningless,tea,milk,code,code,250245121,4
+30,Jacob went to buy a gallon of milk,no,8,1.15,0.81,8,Predictable,tea,milk,code,milk,20955909,4
+31,The girl who lost cried that the competition wasn't over,no,6,0.4,0.95,10,Switching,over,fair,cold,over,459222855,4
+31,The girl who lost cried that the competition wasn't cold,no,6,0.4,0.95,10,Meaningless,over,fair,cold,cold,40833613,4
+31,The girl who lost cried that the competition wasn't fair,no,6,0.4,0.95,10,Predictable,over,fair,cold,fair,49510931,4
+32,The writer was known for his satire and sharp mouth,no,6,0.93,0.82,10,Switching,mouth,wit,cone,mouth,22880351,5
+32,The writer was known for his satire and sharp cone,no,6,0.93,0.82,10,Meaningless,mouth,wit,cone,cone,4429970,4
+32,The writer was known for his satire and sharp wit,no,6,0.93,0.82,10,Predictable,mouth,wit,cone,wit,5149169,3
+33,"Tired from studying, Dan crumpled his papers into a bin",no,7,1.17,0.8,10,Switching,bin,ball,cookie,bin,57076312,3
+33,"Tired from studying, Dan crumpled his papers into a cookie",no,7,1.17,0.8,10,Meaningless,bin,ball,cookie,cookie,11517481,6
+33,"Tired from studying, Dan crumpled his papers into a ball",no,7,1.17,0.8,10,Predictable,bin,ball,cookie,ball,43399906,4
+34,"On his lunch break, the restaurant owner put up a fuss",yes,11,1,0.87,11,Switching,fuss,sign,curve,fuss,1475395,4
+34,"On his lunch break, the restaurant owner put up a curve",yes,11,1,0.87,11,Meaningless,fuss,sign,curve,curve,11071177,5
+34,"On his lunch break, the restaurant owner put up a sign",yes,11,1,0.87,11,Predictable,fuss,sign,curve,sign,242290578,4
+35,After watching some baseball games she became a referee,no,13,1.43,0.8,9,Switching,referee,fan,dance,referee,2941934,7
+35,After watching some baseball games she became a dance,no,13,1.43,0.8,9,Meaningless,referee,fan,dance,dance,51147967,5
+35,After watching some baseball games she became a fan,no,13,1.43,0.8,9,Predictable,referee,fan,dance,fan,47045446,3
+36,The elementary school girl loved to hula dance,no,3,0.71,0.83,8,Switching,dance,hoop,dark,dance,51147967,5
+36,The elementary school girl loved to hula dark,no,3,0.71,0.83,8,Meaningless,dance,hoop,dark,dark,50669807,4
+36,The elementary school girl loved to hula hoop,no,3,0.71,0.83,8,Predictable,dance,hoop,dark,hoop,2310001,4
+37,He was down twenty dollars after losing the match,no,7,0.65,0.91,9,Switching,match,bet,dead,match,53532481,5
+37,He was down twenty dollars after losing the dead,no,7,0.65,0.91,9,Meaningless,match,bet,dead,dead,48384167,4
+37,He was down twenty dollars after losing the bet,no,7,0.65,0.91,9,Predictable,match,bet,dead,bet,15943118,3
+38,The baby's face puckered when she ate something slimy,no,7,0.48,0.94,9,Switching,slimy,sour,deep,slimy,346686,5
+38,The baby's face puckered when she ate something deep,no,7,0.48,0.94,9,Meaningless,slimy,sour,deep,deep,53447410,4
+38,The baby's face puckered when she ate something sour,no,7,0.48,0.94,9,Predictable,slimy,sour,deep,sour,3757799,4
+39,After weeks at sea the bottle washed up onto rocks,no,7,1.05,0.83,10,Switching,rocks,shore,denim,rocks,12427428,5
+39,After weeks at sea the bottle washed up onto denim,no,7,1.05,0.83,10,Meaningless,rocks,shore,denim,denim,4737554,5
+39,After weeks at sea the bottle washed up onto shore,no,7,1.05,0.83,10,Predictable,rocks,shore,denim,shore,12568485,5
+40,"Every morning, Ben went for a walk with his cane",no,10,1.34,0.8,10,Switching,cane,dog,dew,cane,3494916,4
+40,"Every morning, Ben went for a walk with his dew",no,10,1.34,0.8,10,Meaningless,cane,dog,dew,dew,4526551,3
+40,"Every morning, Ben went for a walk with his dog",no,10,1.34,0.8,10,Predictable,cane,dog,dew,dog,77271631,3
+41,The necklaces were what the thief intended to sell,no,7,0.98,0.83,9,Switching,sell,steal,dine,sell,137696613,4
+41,The necklaces were what the thief intended to dine,no,7,0.98,0.83,9,Meaningless,sell,steal,dine,dine,2012279,4
+41,The necklaces were what the thief intended to steal,no,7,0.98,0.83,9,Predictable,sell,steal,dine,steal,6257493,5
+42,At the center of her valentine was a pink bow,no,6,0.82,0.85,10,Switching,bow,heart,disease,bow,9663748,3
+42,At the center of her valentine was a pink disease,no,6,0.82,0.85,10,Meaningless,bow,heart,disease,disease,60540973,7
+42,At the center of her valentine was a pink heart,no,6,0.82,0.85,10,Predictable,bow,heart,disease,heart,90249265,5
+43,Connor was hungry from his trip and excited to explore,no,12,1.1,0.86,10,Switching,explore,eat,comb,explore,31740200,7
+43,Connor was hungry from his trip and excited to comb,no,12,1.1,0.86,10,Meaningless,explore,eat,comb,comb,2327626,4
+43,Connor was hungry from his trip and excited to eat,no,12,1.1,0.86,10,Predictable,explore,eat,comb,eat,29237400,3
+44,Daniel was upset that his basketball team didn't compete,no,8,0.68,0.91,9,Switching,compete,win,drip,compete,9245630,7
+44,Daniel was upset that his basketball team didn't drip,no,8,0.68,0.91,9,Meaningless,compete,win,drip,drip,1849747,4
+44,Daniel was upset that his basketball team didn't win,no,8,0.68,0.91,9,Predictable,compete,win,drip,win,65264239,3
+45,She comforted the woman and said help would come now,no,14,1.41,0.81,10,Switching,now,soon,dull,now,611387736,3
+45,She comforted the woman and said help would come dull,no,14,1.41,0.81,10,Meaningless,now,soon,dull,dull,3211484,4
+45,She comforted the woman and said help would come soon,no,14,1.41,0.81,10,Predictable,now,soon,dull,soon,77038135,4
+46,"To avoid hitting her head, she had to jump",no,10,1.09,0.85,9,Switching,jump,duck,dye,jump,44137441,4
+46,"To avoid hitting her head, she had to dye",no,10,1.09,0.85,9,Meaningless,jump,duck,dye,dye,4564149,3
+46,"To avoid hitting her head, she had to duck",no,10,1.09,0.85,9,Predictable,jump,duck,dye,duck,8279189,4
+47,The child could identify the figure's color and length,no,12,1.27,0.82,9,Switching,length,shape,ear,length,69469598,6
+47,The child could identify the figure's color and ear,no,12,1.27,0.82,9,Meaningless,length,shape,ear,ear,14872850,3
+47,The child could identify the figure's color and shape,no,12,1.27,0.82,9,Predictable,length,shape,ear,shape,25675227,5
+48,Her left hand was freezing after she lost her jacket,no,8,1.05,0.8,10,Switching,jacket,glove,earring,jacket,17246004,6
+48,Her left hand was freezing after she lost her earring,no,8,1.05,0.8,10,Meaningless,jacket,glove,earring,earring,2146830,7
+48,Her left hand was freezing after she lost her glove,no,8,1.05,0.8,10,Predictable,jacket,glove,earring,glove,4714578,5
+49,Sharing combs with infected people gave Lorie concerns,no,11,0.86,0.89,8,Switching,concerns,lice,ears,concerns,29065609,8
+49,Sharing combs with infected people gave Lorie ears,no,11,0.86,0.89,8,Meaningless,concerns,lice,ears,ears,7324193,4
+49,Sharing combs with infected people gave Lorie lice,no,11,0.86,0.89,8,Predictable,concerns,lice,ears,lice,1005234,4
+50,May thought her leg was taking too long to shave,no,11,0.8,0.9,10,Switching,shave,heal,enjoy,shave,2580057,5
+50,May thought her leg was taking too long to enjoy,no,11,0.8,0.9,10,Meaningless,shave,heal,enjoy,enjoy,50141455,5
+50,May thought her leg was taking too long to heal,no,11,0.8,0.9,10,Predictable,shave,heal,enjoy,heal,3769650,4
+51,"Soon after Janice stepped on the wet floor, she stumbled",no,5,0.84,0.82,10,Switching,stumbled,slipped,explored,stumbled,1380668,8
+51,"Soon after Janice stepped on the wet floor, she explored",no,5,0.84,0.82,10,Meaningless,stumbled,slipped,explored,explored,3887481,8
+51,"Soon after Janice stepped on the wet floor, she slipped",no,5,0.84,0.82,10,Predictable,stumbled,slipped,explored,slipped,2410446,7
+52,Before you take a bath you should clean the tiles,no,10,1.04,0.86,10,Switching,tiles,tub,eye,tiles,5251527,5
+52,Before you take a bath you should clean the eye,no,10,1.04,0.86,10,Meaningless,tiles,tub,eye,eye,52688696,3
+52,Before you take a bath you should clean the tub,no,10,1.04,0.86,10,Predictable,tiles,tub,eye,tub,8990811,3
+53,Hank was nervous to move into the fraternity alone,no,6,0.69,0.9,9,Switching,alone,house,sentence,alone,39326417,5
+53,Hank was nervous to move into the fraternity sentence,no,6,0.69,0.9,9,Meaningless,alone,house,sentence,sentence,14359872,8
+53,Hank was nervous to move into the fraternity house,no,6,0.69,0.9,9,Predictable,alone,house,sentence,house,231310420,5
+54,The rabbits ate everything growing in Elle's veggie basket,no,3,0.48,0.91,9,Switching,basket,garden,face,basket,45023597,6
+54,The rabbits ate everything growing in Elle's veggie face,no,3,0.48,0.91,9,Meaningless,basket,garden,face,face,82807978,4
+54,The rabbits ate everything growing in Elle's veggie garden,no,3,0.48,0.91,9,Predictable,basket,garden,face,garden,119014988,6
+55,The impatient man kept glancing at his wife,no,5,0.44,0.94,8,Switching,wife,watch,brain,wife,46946408,4
+55,The impatient man kept glancing at his brain,no,5,0.44,0.94,8,Meaningless,wife,watch,brain,brain,33612784,5
+55,The impatient man kept glancing at his watch,no,5,0.44,0.94,8,Predictable,wife,watch,brain,watch,92006970,5
+56,"After swallowing too quickly, Simon began to burp",no,6,0.98,0.82,8,Switching,burp,choke,fix,burp,454884,4
+56,"After swallowing too quickly, Simon began to fix",no,6,0.98,0.82,8,Meaningless,burp,choke,fix,fix,32334055,3
+56,"After swallowing too quickly, Simon began to choke",no,6,0.98,0.82,8,Predictable,burp,choke,fix,choke,1448146,5
+57,Claire claimed motherhood was the hardest job she ever tried,no,10,1.21,0.82,10,Switching,tried,had,flap,tried,34201786,5
+57,Claire claimed motherhood was the hardest job she ever flap,no,10,1.21,0.82,10,Meaningless,tried,had,flap,flap,2725137,4
+57,Claire claimed motherhood was the hardest job she ever had,no,10,1.21,0.82,10,Predictable,tried,had,flap,had,480232730,3
+58,"Every night, the stubborn boy refused to obey",no,7,0.69,0.9,8,Switching,obey,sleep,melt,obey,2820117,4
+58,"Every night, the stubborn boy refused to melt",no,7,0.69,0.9,8,Meaningless,obey,sleep,melt,melt,3153948,4
+58,"Every night, the stubborn boy refused to sleep",no,7,0.69,0.9,8,Predictable,obey,sleep,melt,sleep,29491537,5
+59,He turned to see the dog charging like a maniac,no,14,1.31,0.83,10,Switching,maniac,bull,flower,maniac,994236,6
+59,He turned to see the dog charging like a flower,no,14,1.31,0.83,10,Meaningless,maniac,bull,flower,flower,33364539,6
+59,He turned to see the dog charging like a bull,no,14,1.31,0.83,10,Predictable,maniac,bull,flower,bull,10231851,4
+60,Kristin claimed to be the famous actor's biggest threat,no,5,0.32,0.96,9,Switching,threat,fan,flute,threat,18546277,6
+60,Kristin claimed to be the famous actor's biggest flute,no,5,0.32,0.96,9,Meaningless,threat,fan,flute,flute,4090740,5
+60,Kristin claimed to be the famous actor's biggest fan,no,5,0.32,0.96,9,Predictable,threat,fan,flute,fan,47045446,3
+61,The fisherman loved spending his days on his own,no,10,0.82,0.9,9,Switching,own,boat,fork,own,232011723,3
+61,The fisherman loved spending his days on his fork,no,10,0.82,0.9,9,Meaningless,own,boat,fork,fork,7839872,4
+61,The fisherman loved spending his days on his boat,no,10,0.82,0.9,9,Predictable,own,boat,fork,boat,34104031,4
+62,A nearby woman sprayed the robber with perfume,no,14,1.44,0.8,8,Switching,perfume,mace,freedom,perfume,11109790,7
+62,A nearby woman sprayed the robber with freedom,no,14,1.44,0.8,8,Meaningless,perfume,mace,freedom,freedom,38909717,7
+62,A nearby woman sprayed the robber with mace,no,14,1.44,0.8,8,Predictable,perfume,mace,freedom,mace,1294167,4
+63,Nobody there could undo such a tight bond,no,14,1.14,0.86,8,Switching,bond,knot,frog,bond,23448169,4
+63,Nobody there could undo such a tight frog,no,14,1.14,0.86,8,Meaningless,bond,knot,frog,frog,8019592,4
+63,Nobody there could undo such a tight knot,no,14,1.14,0.86,8,Predictable,bond,knot,frog,knot,2980542,4
+64,"At halftime, the team received a speech from the manager",no,8,1,0.85,10,Switching,manager,coach,fruit,manager,87441704,7
+64,"At halftime, the team received a speech from the fruit",no,8,1,0.85,10,Meaningless,manager,coach,fruit,fruit,22767191,5
+64,"At halftime, the team received a speech from the coach",no,8,1,0.85,10,Predictable,manager,coach,fruit,coach,24514961,5
+65,"At the rock concert, the music was extremely good",no,3,0.16,0.98,9,Switching,good,loud,full,good,365796396,4
+65,"At the rock concert, the music was extremely full",no,3,0.16,0.98,9,Meaningless,good,loud,full,full,309929179,4
+65,"At the rock concert, the music was extremely loud",no,3,0.16,0.98,9,Predictable,good,loud,full,loud,8653692,4
+66,The angry chicken gave the farmer a sharp squawk,no,11,1.17,0.83,9,Switching,squawk,peck,game,squawk,121689,6
+66,The angry chicken gave the farmer a sharp game,no,11,1.17,0.83,9,Meaningless,squawk,peck,game,game,227111505,4
+66,The angry chicken gave the farmer a sharp peck,no,11,1.17,0.83,9,Predictable,squawk,peck,game,peck,1961752,4
+67,Martin always dreamed of being a police informant,no,9,0.98,0.87,8,Switching,informant,officer,gesture,informant,807179,9
+67,Martin always dreamed of being a police gesture,no,9,0.98,0.87,8,Meaningless,informant,officer,gesture,gesture,2211952,7
+67,Martin always dreamed of being a police officer,no,9,0.98,0.87,8,Predictable,informant,officer,gesture,officer,48483165,7
+68,The patient's broken arm took a while to X-ray,no,5,0.75,0.88,8,Switching,X-ray,heal,glance,X-ray,496121,5
+68,The patient's broken arm took a while to glance,no,5,0.75,0.88,8,Meaningless,X-ray,heal,glance,glance,15569554,6
+68,The patient's broken arm took a while to heal,no,5,0.75,0.88,8,Predictable,X-ray,heal,glance,heal,3769650,4
+69,Sadly Mark was sentenced to jail for one offense,no,9,1.23,0.81,9,Switching,offense,year,globe,offense,8248745,7
+69,Sadly Mark was sentenced to jail for one globe,no,9,1.23,0.81,9,Meaningless,offense,year,globe,globe,14554904,5
+69,Sadly Mark was sentenced to jail for one year,no,9,1.23,0.81,9,Predictable,offense,year,globe,year,451092583,4
+70,The thief drove around looking for a house to buy,no,6,0.62,0.91,10,Switching,buy,rob,gossip,buy,410780176,3
+70,The thief drove around looking for a house to gossip,no,6,0.62,0.91,10,Meaningless,buy,rob,gossip,gossip,5789586,6
+70,The thief drove around looking for a house to rob,no,6,0.62,0.91,10,Predictable,buy,rob,gossip,rob,17016018,3
+71,The hiker was unaware that he had walked so quickly,no,7,0.64,0.91,10,Switching,quickly,far,green,quickly,40161558,7
+71,The hiker was unaware that he had walked so green,no,7,0.64,0.91,10,Meaningless,quickly,far,green,green,108287905,5
+71,The hiker was unaware that he had walked so far,no,7,0.64,0.91,10,Predictable,quickly,far,green,far,93061804,3
+72,The little girl wanted the same bicycle her brother lost,no,8,1.01,0.85,10,Switching,lost,had,grew,lost,74748656,4
+72,The little girl wanted the same bicycle her brother grew,no,8,1.01,0.85,10,Meaningless,lost,had,grew,grew,10698645,4
+72,The little girl wanted the same bicycle her brother had,no,8,1.01,0.85,10,Predictable,lost,had,grew,had,480232730,3
+73,They would bury their dog in a grave they loved,no,4,0.45,0.93,10,Switching,loved,dug,grill,loved,19719299,5
+73,They would bury their dog in a grave they grill,no,4,0.45,0.93,10,Meaningless,loved,dug,grill,grill,10254124,5
+73,They would bury their dog in a grave they dug,no,4,0.45,0.93,10,Predictable,loved,dug,grill,dug,1923261,3
+74,"After its injury, the small bird could no longer walk",no,3,0.22,0.97,10,Switching,walk,fly,grin,walk,39129365,4
+74,"After its injury, the small bird could no longer grin",no,3,0.22,0.97,10,Meaningless,walk,fly,grin,grin,2072855,4
+74,"After its injury, the small bird could no longer fly",no,3,0.22,0.97,10,Predictable,walk,fly,grin,fly,28279478,3
+75,During the earthquake the entire building swayed,no,7,1.09,0.82,7,Switching,swayed,shook,sang,swayed,383673,6
+75,During the earthquake the entire building sang,no,7,1.09,0.82,7,Meaningless,swayed,shook,sang,sang,3669266,4
+75,During the earthquake the entire building shook,no,7,1.09,0.82,7,Predictable,swayed,shook,sang,shook,2917411,5
+76,Jen's love for children and school convinced her to return,no,9,0.85,0.89,10,Switching,return,teach,guess,return,205629763,6
+76,Jen's love for children and school convinced her to guess,no,9,0.85,0.89,10,Meaningless,return,teach,guess,guess,28743465,5
+76,Jen's love for children and school convinced her to teach,no,9,0.85,0.89,10,Predictable,return,teach,guess,teach,19079783,5
+77,Paul disliked summer because of the humidity and tourists,no,8,0.81,0.89,9,Switching,tourists,heat,hammer,tourists,5022897,8
+77,Paul disliked summer because of the humidity and hammer,no,8,0.81,0.89,9,Meaningless,tourists,heat,hammer,hammer,7382393,6
+77,Paul disliked summer because of the humidity and heat,no,8,0.81,0.89,9,Predictable,tourists,heat,hammer,heat,39971542,4
+78,The viewers fell asleep because the presentation was finished,no,7,0.84,0.87,9,Switching,finished,boring,healthy,finished,25994841,8
+78,The viewers fell asleep because the presentation was healthy,no,7,0.84,0.87,9,Meaningless,finished,boring,healthy,healthy,30360623,7
+78,The viewers fell asleep because the presentation was boring,no,7,0.84,0.87,9,Predictable,finished,boring,healthy,boring,6590871,6
+79,The archer swore that this time he wouldn't shake,no,9,1.18,0.83,9,Switching,shake,miss,heat,shake,6839319,5
+79,The archer swore that this time he wouldn't heat,no,9,1.18,0.83,9,Meaningless,shake,miss,heat,heat,39971542,4
+79,The archer swore that this time he wouldn't miss,no,9,1.18,0.83,9,Predictable,shake,miss,heat,miss,39897915,4
+80,Kennedy told her mom she felt stuck in a loop,no,12,1.02,0.87,10,Switching,loop,rut,hen,loop,21172360,4
+80,Kennedy told her mom she felt stuck in a hen,no,12,1.02,0.87,10,Meaningless,loop,rut,hen,hen,3732543,3
+80,Kennedy told her mom she felt stuck in a rut,no,12,1.02,0.87,10,Predictable,loop,rut,hen,rut,555550,3
+81,The dehydrated athlete grabbed water and began to run,no,6,1.08,0.81,9,Switching,run,drink,hitch,run,117213565,3
+81,The dehydrated athlete grabbed water and began to hitch,no,6,1.08,0.81,9,Meaningless,run,drink,hitch,hitch,2730000,5
+81,The dehydrated athlete grabbed water and began to drink,no,6,1.08,0.81,9,Predictable,run,drink,hitch,drink,29254937,5
+82,The daughter felt guilty after telling her parents a joke,no,5,0.49,0.93,10,Switching,joke,lie,society,joke,9043968,4
+82,The daughter felt guilty after telling her parents a society,no,5,0.49,0.93,10,Meaningless,joke,lie,society,society,111199035,7
+82,The daughter felt guilty after telling her parents a lie,no,5,0.49,0.93,10,Predictable,joke,lie,society,lie,13533542,3
+83,She received the acceptance letter in the spring,no,5,0.32,0.96,8,Switching,spring,mail,horn,spring,64814116,6
+83,She received the acceptance letter in the horn,no,5,0.32,0.96,8,Meaningless,spring,mail,horn,horn,8041908,4
+83,She received the acceptance letter in the mail,no,5,0.32,0.96,8,Predictable,spring,mail,horn,mail,310337185,4
+84,Kelly believed that everything was determined by looks,no,8,1.11,0.83,8,Switching,looks,fate,hotel,looks,43897035,5
+84,Kelly believed that everything was determined by hotel,no,8,1.11,0.83,8,Meaningless,looks,fate,hotel,hotel,297974790,5
+84,Kelly believed that everything was determined by fate,no,8,1.11,0.83,8,Predictable,looks,fate,hotel,fate,7163528,4
+85,Rachel bought yarn for the sweater she wanted to wear,no,8,1.16,0.81,10,Switching,wear,knit,hurt,wear,29846762,4
+85,Rachel bought yarn for the sweater she wanted to hurt,no,8,1.16,0.81,10,Meaningless,wear,knit,hurt,hurt,12936269,4
+85,Rachel bought yarn for the sweater she wanted to knit,no,8,1.16,0.81,10,Predictable,wear,knit,hurt,knit,5113070,4
+86,The ceremony was what changed the boy into a rebel,no,7,0.54,0.93,10,Switching,rebel,man,hut,rebel,6527810,5
+86,The ceremony was what changed the boy into a hut,no,7,0.54,0.93,10,Meaningless,rebel,man,hut,hut,3471098,3
+86,The ceremony was what changed the boy into a man,no,7,0.54,0.93,10,Predictable,rebel,man,hut,man,181445531,3
+87,Chris said his dog had always been his best pet,no,6,0.4,0.95,10,Switching,pet,friend,pie,pet,45445524,3
+87,Chris said his dog had always been his best pie,no,6,0.4,0.95,10,Meaningless,pet,friend,pie,pie,9681219,3
+87,Chris said his dog had always been his best friend,no,6,0.4,0.95,10,Predictable,pet,friend,pie,friend,154527125,6
+88,Karla had played the game and knew how to shoot,no,6,0.85,0.87,10,Switching,shoot,win,iron,shoot,12695618,5
+88,Karla had played the game and knew how to iron,no,6,0.85,0.87,10,Meaningless,shoot,win,iron,iron,32552371,4
+88,Karla had played the game and knew how to win,no,6,0.85,0.87,10,Predictable,shoot,win,iron,win,65264239,3
+89,It was announced that the two companies would compete,no,5,0.32,0.96,9,Switching,compete,merge,kill,compete,9245630,7
+89,It was announced that the two companies would kill,no,5,0.32,0.96,9,Meaningless,compete,merge,kill,kill,24850951,4
+89,It was announced that the two companies would merge,no,5,0.32,0.96,9,Predictable,compete,merge,kill,merge,5961585,5
+90,She wasn't certain she'd find him but she would someday,no,10,1.17,0.81,10,Switching,someday,try,kiss,someday,3074927,7
+90,She wasn't certain she'd find him but she would kiss,no,10,1.17,0.81,10,Meaningless,someday,try,kiss,kiss,14790481,4
+90,She wasn't certain she'd find him but she would try,no,10,1.17,0.81,10,Predictable,someday,try,kiss,try,114384208,3
+91,Between her two front teeth the woman had a crumb,no,14,1.26,0.83,10,Switching,crumb,gap,law,crumb,673404,5
+91,Between her two front teeth the woman had a law,no,14,1.26,0.83,10,Meaningless,crumb,gap,law,law,216122487,3
+91,Between her two front teeth the woman had a gap,no,14,1.26,0.83,10,Predictable,crumb,gap,law,gap,17269901,3
+92,Ezra says he's fit but he can't run a race,no,4,0.91,0.8,10,Switching,race,mile,letter,race,52297214,4
+92,Ezra says he's fit but he can't run a letter,no,4,0.91,0.8,10,Meaningless,race,mile,letter,letter,67339854,6
+92,Ezra says he's fit but he can't run a mile,no,4,0.91,0.8,10,Predictable,race,mile,letter,mile,22178748,4
+93,"During happy hour, the employees visited the bay",no,8,0.88,0.88,8,Switching,bay,bar,price,bay,78967124,3
+93,"During happy hour, the employees visited the price",no,8,0.88,0.88,8,Meaningless,bay,bar,price,price,501651226,5
+93,"During happy hour, the employees visited the bar",no,8,0.88,0.88,8,Predictable,bay,bar,price,bar,77375075,3
+94,"Every weekend, Michelle and her family attended seminars",no,7,0.86,0.85,8,Switching,seminars,church,lipstick,seminars,13272933,8
+94,"Every weekend, Michelle and her family attended lipstick",no,7,0.86,0.85,8,Meaningless,seminars,church,lipstick,lipstick,2163155,8
+94,"Every weekend, Michelle and her family attended church",no,7,0.86,0.85,8,Predictable,seminars,church,lipstick,church,84556943,6
+95,"While cooking, Luke accidentally cut himself with a peeler",no,4,0.3,0.96,9,Switching,peeler,knife,lizard,peeler,314500,6
+95,"While cooking, Luke accidentally cut himself with a lizard",no,4,0.3,0.96,9,Meaningless,peeler,knife,lizard,lizard,2238343,6
+95,"While cooking, Luke accidentally cut himself with a knife",no,4,0.3,0.96,9,Predictable,peeler,knife,lizard,knife,11297715,5
+96,They searched for the thief but he was already jailed,no,5,0.38,0.95,10,Switching,jailed,gone,loved,jailed,1322095,6
+96,They searched for the thief but he was already loved,no,5,0.38,0.95,10,Meaningless,jailed,gone,loved,loved,19719299,5
+96,They searched for the thief but he was already gone,no,5,0.38,0.95,10,Predictable,jailed,gone,loved,gone,34511028,4
+97,Be careful not to cut yourself with the edge,no,6,1.03,0.83,9,Switching,edge,knife,luck,edge,41869418,4
+97,Be careful not to cut yourself with the luck,no,6,1.03,0.83,9,Meaningless,edge,knife,luck,luck,16734573,4
+97,Be careful not to cut yourself with the knife,no,6,1.03,0.83,9,Predictable,edge,knife,luck,knife,11297715,5
+98,"When the market crashed, many stores' profits went poof",no,9,0.96,0.87,9,Switching,poof,down,magic,poof,307682,4
+98,"When the market crashed, many stores' profits went magic",no,9,0.96,0.87,9,Meaningless,poof,down,magic,magic,36676771,5
+98,"When the market crashed, many stores' profits went down",no,9,0.96,0.87,9,Predictable,poof,down,magic,down,224915894,4
+99,Nick quit violin class because practicing felt like a prison,no,16,1.53,0.8,10,Switching,prison,chore,mango,prison,15837188,6
+99,Nick quit violin class because practicing felt like a mango,no,16,1.53,0.8,10,Meaningless,prison,chore,mango,mango,2171900,5
+99,Nick quit violin class because practicing felt like a chore,no,16,1.53,0.8,10,Predictable,prison,chore,mango,chore,565322,5
+100,They ate the bread and went to buy another beer,no,5,0.32,0.96,10,Switching,beer,loaf,marathon,beer,20486707,4
+100,They ate the bread and went to buy another marathon,no,5,0.32,0.96,10,Meaningless,beer,loaf,marathon,marathon,6184918,8
+100,They ate the bread and went to buy another loaf,no,5,0.32,0.96,10,Predictable,beer,loaf,marathon,loaf,1599779,4
+101,Grace always knew when her sister was telling a joke,no,5,0.54,0.92,10,Switching,joke,lie,meal,joke,9043968,4
+101,Grace always knew when her sister was telling a meal,no,5,0.54,0.92,10,Meaningless,joke,lie,meal,meal,12937343,4
+101,Grace always knew when her sister was telling a lie,no,5,0.54,0.92,10,Predictable,joke,lie,meal,lie,13533542,3
+102,The child scraped his legs after he crawled,no,8,0.85,0.88,8,Switching,crawled,fell,melt,crawled,595326,7
+102,The child scraped his legs after he melt,no,8,0.85,0.88,8,Meaningless,crawled,fell,melt,melt,3153948,4
+102,The child scraped his legs after he fell,no,8,0.85,0.88,8,Predictable,crawled,fell,melt,fell,15084108,4
+103,Ben's mother ran to him and gave him a dollar,no,8,1.04,0.83,10,Switching,dollar,hug,month,dollar,35275336,6
+103,Ben's mother ran to him and gave him a month,no,8,1.04,0.83,10,Meaningless,dollar,hug,month,month,123027963,5
+103,Ben's mother ran to him and gave him a hug,no,8,1.04,0.83,10,Predictable,dollar,hug,month,hug,2943073,3
+104,One may experience trauma after returning from college,no,11,0.86,0.89,8,Switching,college,war,mug,college,182545426,7
+104,One may experience trauma after returning from mug,no,11,0.86,0.89,8,Meaningless,college,war,mug,mug,5112219,3
+104,One may experience trauma after returning from war,no,11,0.86,0.89,8,Predictable,college,war,mug,war,126517399,3
+105,Sally took her children to the candy man,no,4,0.63,0.88,8,Switching,man,store,neck,man,181445531,3
+105,Sally took her children to the candy neck,no,4,0.63,0.88,8,Meaningless,man,store,neck,neck,17354931,4
+105,Sally took her children to the candy store,no,4,0.63,0.88,8,Predictable,man,store,neck,store,291308910,5
+106,His mother was so distraught she began to pace,no,9,1.23,0.81,9,Switching,pace,cry,need,pace,12247704,4
+106,His mother was so distraught she began to need,no,9,1.23,0.81,9,Meaningless,pace,cry,need,need,319376932,4
+106,His mother was so distraught she began to cry,no,9,1.23,0.81,9,Predictable,pace,cry,need,cry,11624610,3
+107,The room looked better once paintings were on the floor,no,6,0.4,0.95,10,Switching,floor,wall,noise,floor,53759851,5
+107,The room looked better once paintings were on the noise,no,6,0.4,0.95,10,Meaningless,floor,wall,noise,noise,25171520,5
+107,The room looked better once paintings were on the wall,no,6,0.4,0.95,10,Predictable,floor,wall,noise,wall,59430375,4
+108,She told her bearded boyfriend that he needed to go,yes,8,0.62,0.92,10,Switching,go,shave,pant,go,421086358,2
+108,She told her bearded boyfriend that he needed to pant,yes,8,0.62,0.92,10,Meaningless,go,shave,pant,pant,3138558,4
+108,She told her bearded boyfriend that he needed to shave,yes,8,0.62,0.92,10,Predictable,go,shave,pant,shave,2580057,5
+109,Suzy saw a sign that said babysitter for weekends,no,8,0.88,0.88,9,Switching,weekends,hire,peak,weekends,9928005,8
+109,Suzy saw a sign that said babysitter for peak,no,8,0.88,0.88,9,Meaningless,weekends,hire,peak,peak,25379630,4
+109,Suzy saw a sign that said babysitter for hire,no,8,0.88,0.88,9,Predictable,weekends,hire,peak,hire,36743717,4
+110,"After washing his hands, Brandon dried them with a napkin",no,4,0.3,0.96,10,Switching,napkin,towel,pear,napkin,1009290,6
+110,"After washing his hands, Brandon dried them with a pear",no,4,0.3,0.96,10,Meaningless,napkin,towel,pear,pear,4324248,4
+110,"After washing his hands, Brandon dried them with a towel",no,4,0.3,0.96,10,Predictable,napkin,towel,pear,towel,4901668,5
+111,The farmer's plants grew well in the nutrient-dense backyard,no,10,1.15,0.84,9,Switching,backyard,soil,pearl,backyard,4541081,8
+111,The farmer's plants grew well in the nutrient-dense pearl,no,10,1.15,0.84,9,Meaningless,backyard,soil,pearl,pearl,18707334,5
+111,The farmer's plants grew well in the nutrient-dense soil,no,10,1.15,0.84,9,Predictable,backyard,soil,pearl,soil,23949346,4
+112,"At the hotel, Kevin kept his valuables in the closet",no,11,0.85,0.9,10,Switching,closet,safe,pie,closet,4581735,6
+112,"At the hotel, Kevin kept his valuables in the pie",no,11,0.85,0.9,10,Meaningless,closet,safe,pie,pie,9681219,3
+112,"At the hotel, Kevin kept his valuables in the safe",no,11,0.85,0.9,10,Predictable,closet,safe,pie,safe,63168116,4
+113,The rancher claimed his cows produced the best cream,no,7,1.03,0.82,9,Switching,cream,milk,phone,cream,25898758,5
+113,The rancher claimed his cows produced the best phone,no,7,1.03,0.82,9,Meaningless,cream,milk,phone,phone,256643812,5
+113,The rancher claimed his cows produced the best milk,no,7,1.03,0.82,9,Predictable,cream,milk,phone,milk,20955909,4
+114,Joseph knew the house was haunted after seeing the video,no,15,1.38,0.82,10,Switching,video,ghost,pizza,video,365410017,5
+114,Joseph knew the house was haunted after seeing the pizza,no,15,1.38,0.82,10,Meaningless,video,ghost,pizza,pizza,14763787,5
+114,Joseph knew the house was haunted after seeing the ghost,no,15,1.38,0.82,10,Predictable,video,ghost,pizza,ghost,14490042,5
+115,"When at his son's game, Mark would always drink",yes,11,1.08,0.86,9,Switching,drink,cheer,plane,drink,29254937,5
+115,"When at his son's game, Mark would always plane",yes,11,1.08,0.86,9,Meaningless,drink,cheer,plane,plane,17799728,5
+115,"When at his son's game, Mark would always cheer",yes,11,1.08,0.86,9,Predictable,drink,cheer,plane,cheer,3648929,5
+116,It seemed as if he tripped over his own words,no,7,1.13,0.82,10,Switching,words,feet,plum,words,90910143,5
+116,It seemed as if he tripped over his own plum,no,7,1.13,0.82,10,Meaningless,words,feet,plum,plum,2961363,4
+116,It seemed as if he tripped over his own feet,no,7,1.13,0.82,10,Predictable,words,feet,plum,feet,57146840,4
+117,Natalie covered her head to avoid getting her hair burned,no,8,1.21,0.81,10,Switching,burned,wet,poor,burned,4993504,6
+117,Natalie covered her head to avoid getting her hair poor,no,8,1.21,0.81,10,Meaningless,burned,wet,poor,poor,48053008,4
+117,Natalie covered her head to avoid getting her hair wet,no,8,1.21,0.81,10,Predictable,burned,wet,poor,wet,23918294,3
+118,Their water source on the farm was the old pond,no,10,0.87,0.89,10,Switching,pond,well,door,pond,9223378,4
+118,Their water source on the farm was the old door,no,10,0.87,0.89,10,Meaningless,pond,well,door,door,56638839,4
+118,Their water source on the farm was the old well,no,10,0.87,0.89,10,Predictable,pond,well,door,well,362082755,4
+119,The couple's relationship changed after they were pregnant,no,10,1.26,0.8,8,Switching,pregnant,married,cooked,pregnant,19945624,8
+119,The couple's relationship changed after they were cooked,no,10,1.26,0.8,8,Meaningless,pregnant,married,cooked,cooked,5367778,6
+119,The couple's relationship changed after they were married,no,10,1.26,0.8,8,Predictable,pregnant,married,cooked,married,30202662,7
+120,You should always read it over before signing a form,no,5,1.03,0.8,10,Switching,form,contract,radio,form,201395192,4
+120,You should always read it over before signing a radio,no,5,1.03,0.8,10,Meaningless,form,contract,radio,radio,113285624,5
+120,You should always read it over before signing a contract,no,5,1.03,0.8,10,Predictable,form,contract,radio,contract,66895933,8
+121,After missing lunch Harry badly needed some rest,no,12,1.2,0.84,8,Switching,rest,food,rails,rest,53312008,4
+121,After missing lunch Harry badly needed some rails,no,12,1.2,0.84,8,Meaningless,rest,food,rails,rails,4364886,5
+121,After missing lunch Harry badly needed some food,no,12,1.2,0.84,8,Predictable,rest,food,rails,food,180144029,4
+122,The figure skater was spinning like a tornado,no,12,1.1,0.86,8,Switching,tornado,top,reef,tornado,2573937,7
+122,The figure skater was spinning like a reef,no,12,1.1,0.86,8,Meaningless,tornado,top,reef,reef,6627185,4
+122,The figure skater was spinning like a top,no,12,1.1,0.86,8,Predictable,tornado,top,reef,top,484213771,3
+123,It was hard to watch the poor animal sleep,no,9,1.16,0.81,9,Switching,sleep,suffer,retire,sleep,29491537,5
+123,It was hard to watch the poor animal retire,no,9,1.16,0.81,9,Meaningless,sleep,suffer,retire,retire,3522241,6
+123,It was hard to watch the poor animal suffer,no,9,1.16,0.81,9,Predictable,sleep,suffer,retire,suffer,8733670,6
+124,"When the athlete played poorly, the fans would laugh",no,10,1.14,0.83,9,Switching,laugh,boo,ride,laugh,9822471,5
+124,"When the athlete played poorly, the fans would ride",no,10,1.14,0.83,9,Meaningless,laugh,boo,ride,ride,26153004,4
+124,"When the athlete played poorly, the fans would boo",no,10,1.14,0.83,9,Predictable,laugh,boo,ride,boo,2884230,3
+125,"When told he wouldn't walk again, Lewis still had questions",no,13,1.2,0.84,10,Switching,questions,hope,river,questions,156703712,9
+125,"When told he wouldn't walk again, Lewis still had river",no,13,1.2,0.84,10,Meaningless,questions,hope,river,river,78843808,5
+125,"When told he wouldn't walk again, Lewis still had hope",no,13,1.2,0.84,10,Predictable,questions,hope,river,hope,74145758,4
+126,Janice changed her bank password after a security error,no,7,1,0.85,9,Switching,error,breach,road,error,89396475,5
+126,Janice changed her bank password after a security road,no,7,1,0.85,9,Meaningless,error,breach,road,road,131800620,4
+126,Janice changed her bank password after a security breach,no,7,1,0.85,9,Predictable,error,breach,road,breach,5928795,6
+127,"After selecting the yarn, Karen began to plan",no,5,0.89,0.83,8,Switching,plan,knit,roar,plan,160746244,4
+127,"After selecting the yarn, Karen began to roar",no,5,0.89,0.83,8,Meaningless,plan,knit,roar,roar,1443087,4
+127,"After selecting the yarn, Karen began to knit",no,5,0.89,0.83,8,Predictable,plan,knit,roar,knit,5113070,4
+128,The fish did not breathe properly due to a damaged tank,no,5,0.78,0.87,11,Switching,tank,gill,roof,tank,22070512,4
+128,The fish did not breathe properly due to a damaged roof,no,5,0.78,0.87,11,Meaningless,tank,gill,roof,roof,14809282,4
+128,The fish did not breathe properly due to a damaged gill,no,5,0.78,0.87,11,Predictable,tank,gill,roof,gill,3672989,4
+129,On weekends he often drank more than he admitted,no,12,1.41,0.8,9,Switching,admitted,should,rotate,admitted,8784950,8
+129,On weekends he often drank more than he rotate,no,12,1.41,0.8,9,Meaningless,admitted,should,rotate,rotate,2856677,6
+129,On weekends he often drank more than he should,no,12,1.41,0.8,9,Predictable,admitted,should,rotate,should,402028056,6
+130,"After receiving bad news, the patient began to pray",no,9,1.17,0.83,9,Switching,pray,cry,sail,pray,8562732,4
+130,"After receiving bad news, the patient began to sail",no,9,1.17,0.83,9,Meaningless,pray,cry,sail,sail,5227908,4
+130,"After receiving bad news, the patient began to cry",no,9,1.17,0.83,9,Predictable,pray,cry,sail,cry,11624610,3
+131,Little Amelia's favorite toy was her hula doll,no,2,0.08,0.99,8,Switching,doll,hoop,salt,doll,12047864,4
+131,Little Amelia's favorite toy was her hula salt,no,2,0.08,0.99,8,Meaningless,doll,hoop,salt,salt,25320518,4
+131,Little Amelia's favorite toy was her hula hoop,no,2,0.08,0.99,8,Predictable,doll,hoop,salt,hoop,2310001,4
+132,Her boots were ruined and she needed a new dress,no,15,1.32,0.83,10,Switching,dress,pair,sand,dress,27318959,5
+132,Her boots were ruined and she needed a new sand,no,15,1.32,0.83,10,Meaningless,dress,pair,sand,sand,16327687,4
+132,Her boots were ruined and she needed a new pair,no,15,1.32,0.83,10,Predictable,dress,pair,sand,pair,26036703,4
+133,Albert lived in a thatched hut that he inherited,no,6,0.62,0.91,9,Switching,inherited,built,ate,inherited,6938093,9
+133,Albert lived in a thatched hut that he ate,no,6,0.62,0.91,9,Meaningless,inherited,built,ate,ate,5929336,3
+133,Albert lived in a thatched hut that he built,no,6,0.62,0.91,9,Predictable,inherited,built,ate,built,61502894,5
+134,Our walk was illuminated by the light of the sun,no,13,1.23,0.84,10,Switching,sun,moon,sheep,sun,121218500,3
+134,Our walk was illuminated by the light of the sheep,no,13,1.23,0.84,10,Meaningless,sun,moon,sheep,sheep,8962638,5
+134,Our walk was illuminated by the light of the moon,no,13,1.23,0.84,10,Predictable,sun,moon,sheep,moon,28374261,4
+135,Paulina gave the huge lollipop a big bite,no,7,0.83,0.88,8,Switching,bite,lick,shell,bite,6058201,4
+135,Paulina gave the huge lollipop a big shell,no,7,0.83,0.88,8,Meaningless,bite,lick,shell,shell,20599318,5
+135,Paulina gave the huge lollipop a big lick,no,7,0.83,0.88,8,Predictable,bite,lick,shell,lick,3431970,4
+136,Tucker has no filter and says whatever enters his brain,no,7,0.76,0.88,10,Switching,brain,mind,size,brain,33612784,5
+136,Tucker has no filter and says whatever enters his size,no,7,0.76,0.88,10,Meaningless,brain,mind,size,size,214844153,4
+136,Tucker has no filter and says whatever enters his mind,no,7,0.76,0.88,10,Predictable,brain,mind,size,mind,75393868,4
+137,The soccer player was praised for the game-winning strategy,no,10,1.22,0.82,9,Switching,strategy,goal,sleeve,strategy,57170155,8
+137,The soccer player was praised for the game-winning sleeve,no,10,1.22,0.82,9,Meaningless,strategy,goal,sleeve,sleeve,11444961,6
+137,The soccer player was praised for the game-winning goal,no,10,1.22,0.82,9,Predictable,strategy,goal,sleeve,goal,43074829,4
+138,Please do not step into the hole that I left,no,5,0.63,0.9,10,Switching,left,dug,slept,left,171752631,4
+138,Please do not step into the hole that I slept,no,5,0.63,0.9,10,Meaningless,left,dug,slept,slept,2370802,5
+138,Please do not step into the hole that I dug,no,5,0.63,0.9,10,Predictable,left,dug,slept,dug,1923261,3
+139,"After winning the lottery, Cole was excited to be single",no,10,0.84,0.89,10,Switching,single,rich,slow,single,134754203,6
+139,"After winning the lottery, Cole was excited to be slow",no,10,0.84,0.89,10,Meaningless,single,rich,slow,slow,26870240,4
+139,"After winning the lottery, Cole was excited to be rich",no,10,0.84,0.89,10,Predictable,single,rich,slow,rich,37200952,4
+140,Greg made sure nothing bad happened under his guidance,no,8,0.89,0.88,9,Switching,guidance,watch,snake,guidance,23681851,8
+140,Greg made sure nothing bad happened under his snake,no,8,0.89,0.88,9,Meaningless,guidance,watch,snake,snake,7606395,5
+140,Greg made sure nothing bad happened under his watch,no,8,0.89,0.88,9,Predictable,guidance,watch,snake,watch,92006970,5
+141,"Although they had met before, Lee couldn't remember his aunt",no,5,0.38,0.95,10,Switching,aunt,name,snow,aunt,4594042,4
+141,"Although they had met before, Lee couldn't remember his snow",no,5,0.38,0.95,10,Meaningless,aunt,name,snow,snow,35358852,4
+141,"Although they had met before, Lee couldn't remember his name",no,5,0.38,0.95,10,Predictable,aunt,name,snow,name,464532702,4
+142,Eric was worried that his car didn't have enough oil,no,8,0.95,0.86,10,Switching,oil,gas,soap,oil,82178167,3
+142,Eric was worried that his car didn't have enough soap,no,8,0.95,0.86,10,Meaningless,oil,gas,soap,soap,12485378,4
+142,Eric was worried that his car didn't have enough gas,no,8,0.95,0.86,10,Predictable,oil,gas,soap,gas,71518871,3
+143,"To capture butterflies, he set out with a plan",no,7,0.73,0.9,9,Switching,plan,net,sore,plan,160746244,4
+143,"To capture butterflies, he set out with a sore",no,7,0.73,0.9,9,Meaningless,plan,net,sore,sore,3330335,4
+143,"To capture butterflies, he set out with a net",no,7,0.73,0.9,9,Predictable,plan,net,sore,net,116883588,3
+144,David lost the tug of war because he was too tired to care,yes,10,1.23,0.82,11,Switching,care,pull,sell,care,225326739,4
+144,David lost the tug of war because he was too tired to sell,yes,10,1.23,0.82,11,Meaningless,care,pull,sell,sell,137696613,4
+144,David lost the tug of war because he was too tired to pull,yes,10,1.23,0.82,11,Predictable,care,pull,sell,pull,19061871,4
+145,Napa Valley in California is known for making money,no,7,0.48,0.94,9,Switching,money,wine,space,money,190205072,5
+145,Napa Valley in California is known for making space,no,7,0.48,0.94,9,Meaningless,money,wine,space,space,121505269,5
+145,Napa Valley in California is known for making wine,no,7,0.48,0.94,9,Predictable,money,wine,space,wine,58491725,4
+146,The toddler jumped but the jar was out of sight,no,11,1.26,0.82,10,Switching,sight,reach,speed,sight,13360499,5
+146,The toddler jumped but the jar was out of speed,no,11,1.26,0.82,10,Meaningless,sight,reach,speed,speed,83135749,5
+146,The toddler jumped but the jar was out of reach,no,11,1.26,0.82,10,Predictable,sight,reach,speed,reach,35687918,5
+147,Chuck preferred conversing with the kids than with the teacher,no,7,0.95,0.83,10,Switching,teacher,adults,spoon,teacher,48002944,7
+147,Chuck preferred conversing with the kids than with the spoon,no,7,0.95,0.83,10,Meaningless,teacher,adults,spoon,spoon,4000406,5
+147,Chuck preferred conversing with the kids than with the adults,no,7,0.95,0.83,10,Predictable,teacher,adults,spoon,adults,32847475,6
+148,They tried but they couldn't get the engine to rev,no,7,0.81,0.88,10,Switching,rev,start,sink,rev,12575365,3
+148,They tried but they couldn't get the engine to sink,no,7,0.81,0.88,10,Meaningless,rev,start,sink,sink,8120590,4
+148,They tried but they couldn't get the engine to start,no,7,0.81,0.88,10,Predictable,rev,start,sink,start,161913408,5
+149,"In the haunted house, the woman spotted a spider",no,11,0.9,0.89,9,Switching,spider,ghost,station,spider,9436277,6
+149,"In the haunted house, the woman spotted a station",no,11,0.9,0.89,9,Meaningless,spider,ghost,station,station,61892291,7
+149,"In the haunted house, the woman spotted a ghost",no,11,0.9,0.89,9,Predictable,spider,ghost,station,ghost,14490042,5
+150,After the hike their intense thirst was hard to bear,no,10,1.05,0.86,10,Switching,bear,quench,storm,bear,31981362,4
+150,After the hike their intense thirst was hard to storm,no,10,1.05,0.86,10,Meaningless,bear,quench,storm,storm,22242164,5
+150,After the hike their intense thirst was hard to quench,no,10,1.05,0.86,10,Predictable,bear,quench,storm,quench,479869,6
+151,Charles knew that the woman was out of his class,no,11,1.27,0.82,10,Switching,class,league,stove,class,191087771,5
+151,Charles knew that the woman was out of his stove,no,11,1.27,0.82,10,Meaningless,class,league,stove,stove,3914849,5
+151,Charles knew that the woman was out of his league,no,11,1.27,0.82,10,Predictable,class,league,stove,league,41109010,6
+152,Severe joint pain is often a symptom of problems,no,16,1.36,0.83,9,Switching,problems,arthritis,study,problems,121087620,8
+152,Severe joint pain is often a symptom of study,no,16,1.36,0.83,9,Meaningless,problems,arthritis,study,study,152978354,5
+152,Severe joint pain is often a symptom of arthritis,no,16,1.36,0.83,9,Predictable,problems,arthritis,study,arthritis,8597099,9
+153,The receptionist handed Kim some papers and a meal,no,9,0.81,0.89,9,Switching,meal,pen,sun,meal,12937343,4
+153,The receptionist handed Kim some papers and a sun,no,9,0.81,0.89,9,Meaningless,meal,pen,sun,sun,121218500,3
+153,The receptionist handed Kim some papers and a pen,no,9,0.81,0.89,9,Predictable,meal,pen,sun,pen,16371249,3
+154,"Under her pillow, the little girl placed her gun",no,6,0.52,0.93,9,Switching,gun,tooth,swamp,gun,22834049,3
+154,"Under her pillow, the little girl placed her swamp",no,6,0.52,0.93,9,Meaningless,gun,tooth,swamp,swamp,2575587,5
+154,"Under her pillow, the little girl placed her tooth",no,6,0.52,0.93,9,Predictable,gun,tooth,swamp,tooth,5551049,5
+155,Elle got behind the stalled car and began to panic,no,11,1,0.87,10,Switching,panic,push,swim,panic,6396440,5
+155,Elle got behind the stalled car and began to swim,no,11,1,0.87,10,Meaningless,panic,push,swim,swim,8739102,4
+155,Elle got behind the stalled car and began to push,no,11,1,0.87,10,Predictable,panic,push,swim,push,20775147,4
+156,"Dirty and worn, the rain boots were covered in holes",no,7,0.54,0.93,10,Switching,holes,mud,sword,holes,11529280,5
+156,"Dirty and worn, the rain boots were covered in sword",no,7,0.54,0.93,10,Meaningless,holes,mud,sword,sword,8835685,5
+156,"Dirty and worn, the rain boots were covered in mud",no,7,0.54,0.93,10,Predictable,holes,mud,sword,mud,5915017,3
+157,At dinner the rolls were her favorite thing to serve,no,7,0.65,0.91,10,Switching,serve,eat,tape,serve,36697856,5
+157,At dinner the rolls were her favorite thing to tape,no,7,0.65,0.91,10,Meaningless,serve,eat,tape,tape,30941382,4
+157,At dinner the rolls were her favorite thing to eat,no,7,0.65,0.91,10,Predictable,serve,eat,tape,eat,29237400,3
+158,Emily gave her somber friend a comforting speech,no,12,0.98,0.88,8,Switching,speech,hug,tax,speech,31119662,6
+158,Emily gave her somber friend a comforting tax,no,12,0.98,0.88,8,Meaningless,speech,hug,tax,tax,146906651,3
+158,Emily gave her somber friend a comforting hug,no,12,0.98,0.88,8,Predictable,speech,hug,tax,hug,2943073,3
+159,Amy said the crowd outside had turned into a nightmare,no,9,0.83,0.89,10,Switching,nightmare,mob,tea,nightmare,5217283,9
+159,Amy said the crowd outside had turned into a tea,no,9,0.83,0.89,10,Meaningless,nightmare,mob,tea,tea,27406794,3
+159,Amy said the crowd outside had turned into a mob,no,9,0.83,0.89,10,Predictable,nightmare,mob,tea,mob,3599356,3
+160,"In the past, the military only enlisted abroad",no,11,0.95,0.88,8,Switching,abroad,men,teeth,abroad,14837382,6
+160,"In the past, the military only enlisted teeth",no,11,0.95,0.88,8,Meaningless,abroad,men,teeth,teeth,9769437,5
+160,"In the past, the military only enlisted men",no,11,0.95,0.88,8,Predictable,abroad,men,teeth,men,174058407,3
+161,"Macy had planned meticulously, leaving nothing to waste",no,18,1.57,0.8,8,Switching,waste,chance,tent,waste,41089558,5
+161,"Macy had planned meticulously, leaving nothing to tent",no,18,1.57,0.8,8,Meaningless,waste,chance,tent,tent,6542394,4
+161,"Macy had planned meticulously, leaving nothing to chance",no,18,1.57,0.8,8,Predictable,waste,chance,tent,chance,43461638,6
+162,Dave was heartbroken to see that his goldfish was eaten,no,7,0.6,0.92,10,Switching,eaten,dead,painted,eaten,3412832,5
+162,Dave was heartbroken to see that his goldfish was painted,no,7,0.6,0.92,10,Meaningless,eaten,dead,painted,painted,10666710,7
+162,Dave was heartbroken to see that his goldfish was dead,no,7,0.6,0.92,10,Predictable,eaten,dead,painted,dead,48384167,4
+163,"She didn't give him a long kiss, just a wave",no,7,0.82,0.87,10,Switching,wave,peck,tire,wave,23713001,4
+163,"She didn't give him a long kiss, just a tire",no,7,0.82,0.87,10,Meaningless,wave,peck,tire,tire,9192117,4
+163,"She didn't give him a long kiss, just a peck",no,7,0.82,0.87,10,Predictable,wave,peck,tire,peck,1961752,4
+164,Sam does not like desserts that are too tart,no,11,1.03,0.86,9,Switching,tart,sweet,tired,tart,1362374,4
+164,Sam does not like desserts that are too tired,no,11,1.03,0.86,9,Meaningless,tart,sweet,tired,tired,11158233,5
+164,Sam does not like desserts that are too sweet,no,11,1.03,0.86,9,Predictable,tart,sweet,tired,sweet,32311923,5
+165,"During the hike, Lila's feet hurt more with each mile",no,3,0.16,0.98,10,Switching,mile,step,tone,mile,22178748,4
+165,"During the hike, Lila's feet hurt more with each tone",no,3,0.16,0.98,10,Meaningless,mile,step,tone,tone,17397122,4
+165,"During the hike, Lila's feet hurt more with each step",no,3,0.16,0.98,10,Predictable,mile,step,tone,step,86147277,4
+166,Cory opened the door after pulling with all his muscles,no,5,0.57,0.91,10,Switching,muscles,might,torch,muscles,5855328,7
+166,Cory opened the door after pulling with all his torch,no,5,0.57,0.91,10,Meaningless,muscles,might,torch,torch,3360286,5
+166,Cory opened the door after pulling with all his might,no,5,0.57,0.91,10,Predictable,muscles,might,torch,might,123196001,5
+167,"Before the gala, Katie couldn't decide what to eat",no,3,0.27,0.96,9,Switching,eat,wear,touch,eat,29237400,3
+167,"Before the gala, Katie couldn't decide what to touch",no,3,0.27,0.96,9,Meaningless,eat,wear,touch,touch,36831035,5
+167,"Before the gala, Katie couldn't decide what to wear",no,3,0.27,0.96,9,Predictable,eat,wear,touch,wear,29846762,4
+168,Alex waited for the jury to decide his case,no,7,0.79,0.88,9,Switching,case,fate,tour,case,235563000,4
+168,Alex waited for the jury to decide his tour,no,7,0.79,0.88,9,Meaningless,case,fate,tour,tour,74702459,4
+168,Alex waited for the jury to decide his fate,no,7,0.79,0.88,9,Predictable,case,fate,tour,fate,7163528,4
+169,The kind nun believed that drinking was a treat,no,11,0.95,0.88,9,Switching,treat,sin,toy,treat,19442315,5
+169,The kind nun believed that drinking was a toy,no,11,0.95,0.88,9,Meaningless,treat,sin,toy,toy,26924831,3
+169,The kind nun believed that drinking was a sin,no,11,0.95,0.88,9,Predictable,treat,sin,toy,sin,17939608,3
+170,"Emily enjoys going to malls, because she likes to socialize",no,7,0.48,0.94,10,Switching,socialize,shop,trim,socialize,408106,9
+170,"Emily enjoys going to malls, because she likes to trim",no,7,0.48,0.94,10,Meaningless,socialize,shop,trim,trim,10395161,4
+170,"Emily enjoys going to malls, because she likes to shop",no,7,0.48,0.94,10,Predictable,socialize,shop,trim,shop,212793848,4
+171,She broke up with him because it didn't feel romantic,no,7,0.48,0.94,10,Switching,romantic,right,twice,romantic,13055842,8
+171,She broke up with him because it didn't feel twice,no,7,0.48,0.94,10,Meaningless,romantic,right,twice,twice,19945569,5
+171,She broke up with him because it didn't feel right,no,7,0.48,0.94,10,Predictable,romantic,right,twice,right,273620358,5
+172,The fields of corn flourished due to the fertile seeds,no,8,1.05,0.82,10,Switching,seeds,soil,union,seeds,11196921,5
+172,The fields of corn flourished due to the fertile union,no,8,1.05,0.82,10,Meaningless,seeds,soil,union,union,72603888,5
+172,The fields of corn flourished due to the fertile soil,no,8,1.05,0.82,10,Predictable,seeds,soil,union,soil,23949346,4
+173,I returned the dress because it was the wrong material,no,5,0.71,0.87,10,Switching,material,size,urine,material,98528318,8
+173,I returned the dress because it was the wrong urine,no,5,0.71,0.87,10,Meaningless,material,size,urine,urine,4903932,5
+173,I returned the dress because it was the wrong size,no,5,0.71,0.87,10,Predictable,material,size,urine,size,214844153,4
+174,The feud between the countries could turn into a disaster,no,4,0.24,0.97,10,Switching,disaster,war,vase,disaster,17140948,8
+174,The feud between the countries could turn into a vase,no,4,0.24,0.97,10,Meaningless,disaster,war,vase,vase,4093494,4
+174,The feud between the countries could turn into a war,no,4,0.24,0.97,10,Predictable,disaster,war,vase,war,126517399,3
+175,"While his parents vacationed, the kid threw a huge fit",no,5,0.9,0.84,10,Switching,fit,party,volcano,fit,42342802,3
+175,"While his parents vacationed, the kid threw a huge volcano",no,5,0.9,0.84,10,Meaningless,fit,party,volcano,volcano,3076134,7
+175,"While his parents vacationed, the kid threw a huge party",no,5,0.9,0.84,10,Predictable,fit,party,volcano,party,144707500,5
+176,"As Ben's confidant, Lisa promised she wouldn't waver",no,14,1.43,0.81,8,Switching,waver,tell,wake,waver,217064,5
+176,"As Ben's confidant, Lisa promised she wouldn't wake",no,14,1.43,0.81,8,Meaningless,waver,tell,wake,wake,14120141,4
+176,"As Ben's confidant, Lisa promised she wouldn't tell",no,14,1.43,0.81,8,Predictable,waver,tell,wake,tell,109553730,4
+177,The student spent every recess with his best intention,no,3,0.41,0.93,9,Switching,intention,friend,water,intention,8018304,9
+177,The student spent every recess with his best water,no,3,0.41,0.93,9,Meaningless,intention,friend,water,water,215178488,5
+177,The student spent every recess with his best friend,no,3,0.41,0.93,9,Predictable,intention,friend,water,friend,154527125,6
+178,James bought Maggie a watch because she was always kind,no,11,0.8,0.9,10,Switching,kind,late,wide,kind,70420316,4
+178,James bought Maggie a watch because she was always wide,no,11,0.8,0.9,10,Meaningless,kind,late,wide,wide,87661475,4
+178,James bought Maggie a watch because she was always late,no,11,0.8,0.9,10,Predictable,kind,late,wide,late,65574606,4
+179,"Married to a duchess, Max earned the title of earl",no,5,0.67,0.88,10,Switching,earl,duke,yarn,earl,7084976,4
+179,"Married to a duchess, Max earned the title of yarn",no,5,0.67,0.88,10,Meaningless,earl,duke,yarn,yarn,5113505,4
+179,"Married to a duchess, Max earned the title of duke",no,5,0.67,0.88,10,Predictable,earl,duke,yarn,duke,12250071,4
+180,"After saying goodbye, Tim gave his wife a quick wave",no,5,0.89,0.84,10,Switching,wave,kiss,zoo,wave,23713001,4
+180,"After saying goodbye, Tim gave his wife a quick zoo",no,5,0.89,0.84,10,Meaningless,wave,kiss,zoo,zoo,11589578,3
+180,"After saying goodbye, Tim gave his wife a quick kiss",no,5,0.89,0.84,10,Predictable,wave,kiss,zoo,kiss,14790481,4
