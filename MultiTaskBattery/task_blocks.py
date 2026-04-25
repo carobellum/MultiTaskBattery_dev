@@ -1749,13 +1749,13 @@ class ActionPrediction(Task):
         self.instruction_text = ""
         if 'soccer' in self.task_file:
             self.instruction_text += "\n\n Decide if the ball is going to the left or right."
-            self.instruction_text += f"\n\n\nLEFT: {self.corr_key[1]} \tRIGHT: {self.corr_key[0]}\n"
+            self.instruction_text += f"\n\n\nLEFT: {self.corr_key[0]} \tRIGHT: {self.corr_key[1]}\n"
         elif 'greeting' in self.task_file:
             self.instruction_text += "\n\n Decide if the people will hug or shake hands."
-            self.instruction_text += f"\n\n\n{self.corr_key[1]}. HUG  \t{self.corr_key[0]}. SHAKE HANDS\n"
+            self.instruction_text += f"\n\n\n{self.corr_key[0]}. HUG  \t{self.corr_key[1]}. SHAKE HANDS\n"
         else:
             self.instruction_text += "\n\n Choose what will happen next." # General instruction for both soccer and greeting
-            self.instruction_text += f"\n\n\nLEFT/HUG: {self.corr_key[1]} \n\tRIGHT/SHAKE HANDS: {self.corr_key[0]}\n"
+            self.instruction_text += f"\n\n\nLEFT/HUG: {self.corr_key[0]} \n\tRIGHT/SHAKE HANDS: {self.corr_key[1]}\n"
         instr_visual = visual.TextStim(self.window, text=self.instruction_text, height=self.const.instruction_text_height, color=[-1, -1, -1], wrapWidth=25, pos=(0, 0))
         instr_visual.draw()
         self.window.flip()
