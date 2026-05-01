@@ -271,7 +271,6 @@ class NBack(Task):
             trial (pd.Series):
                 Row of trial_data with all response data added
         """
-
         # Flush any keys in buffer
         event.clearEvents()
 
@@ -1359,6 +1358,14 @@ class RMET(Task):
         trial_info_file = self.const.task_dir / self.name / self.task_file
         self.trial_info = pd.read_csv(trial_info_file, sep='\t')
         self.corr_key = [self.trial_info['key_one'].iloc[0],self.trial_info['key_two'].iloc[0],self.trial_info['key_three'].iloc[0],self.trial_info['key_four'].iloc[0]]
+        # Preload all eye pictures once and reuse across trials (mirrors NBack.init_task).
+        picture_scale = getattr(self.const, 'rmet_picture_scale', None) or 0.7
+        self.stim = []
+        for stim_name in self.trial_info['stim']:
+            stim_path = Path(self.const.stim_dir) / self.name / 'pictures' / stim_name
+            img = visual.ImageStim(self.window, str(stim_path), pos=(0, 0))
+            img.size = img.size * picture_scale
+            self.stim.append(img)
 
     def display_instructions(self):
         task_name = visual.TextStim(self.window, text=f'{self.descriptive_name.capitalize()}', height=self.const.instruction_text_height, color=[-1, -1, -1], bold=True, pos=(0, 3))
@@ -1377,23 +1384,12 @@ class RMET(Task):
 
     def run_trial(self, trial):
         """ Runs a single trial of the Reading the Mind in the Eye (RMET) task """
-
         # Flush any keys in buffer
         event.clearEvents()
 
         # --- Eyes ---
-        # Get the file name
-        picture_file_name = trial['stim']
-        # Construct the picture file path
-        picture_path = Path(self.const.stim_dir) / self.name / 'pictures' / picture_file_name
-        # Convert Pathself object to string for compatibility
-        picture_path_str = str(picture_path)
-        # Create an ImageStim object, explicitly centered so that the four answer
-        # options (placed symmetrically above and below) straddle the image.
-        picture = visual.ImageStim(self.window, str(picture_path_str), pos=(0, 0))
-        # Make the picture smaller
-        picture_scale = getattr(self.const, 'rmet_picture_scale', None) or 0.7
-        picture.size = picture.size * picture_scale
+        # Reuse the preloaded ImageStim for this trial (no per-trial allocation).
+        picture = self.stim[trial['trial_num']]
 
 
 
