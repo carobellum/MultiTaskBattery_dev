@@ -167,6 +167,14 @@ class Experiment:
             if getattr(self.const, 'record_run_end_timestamp', False) and t_num == len(self.task_obj_list) - 1:
                 run_end_timestamp = datetime.now().isoformat()
             run_data.append(r_data)
+
+            # Optional: persist this task's data immediately so completed tasks survive a mid-run crash
+            if getattr(self.const, 'save_per_task', False):
+                task.save_data(self.subj_id, self.run_number)
+                one_row = pd.DataFrame([r_data])
+                one_row.insert(0, 'run_num', self.run_number)
+                ut.append_data_to_file(self.run_data_file, one_row)
+
             self.screen.fixation_cross()
 
             # If last task, wait until the endtime for the last task, which for imaging could be longer than the task duration
@@ -180,15 +188,15 @@ class Experiment:
             self.tk.receiveDataFile(self.tk_filename, self.tk_filename)
 
         run_data = pd.DataFrame(run_data)
-        # save the run data to the run file
-        run_data.insert(0,'run_num',[self.run_number]*len(run_data))
-        if getattr(self.const, 'record_run_end_timestamp', False) and run_end_timestamp is not None:
-            run_data['run_end_timestamp'] = run_end_timestamp
-        ut.append_data_to_file(self.run_data_file, run_data )
+        if not getattr(self.const, 'save_per_task', False):
+            # save the run data to the run file
+            run_data.insert(0,'run_num',[self.run_number]*len(run_data))
+            if getattr(self.const, 'record_run_end_timestamp', False) and run_end_timestamp is not None:
+                run_data['run_end_timestamp'] = run_end_timestamp
+            ut.append_data_to_file(self.run_data_file, run_data )
 
-
-        for task in self.task_obj_list:
-            task.save_data(self.subj_id, self.run_number)
+            for task in self.task_obj_list:
+                task.save_data(self.subj_id, self.run_number)
 
         # show the scoreboard
         self.display_run_feedback(run_data)
