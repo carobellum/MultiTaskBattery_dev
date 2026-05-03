@@ -130,7 +130,6 @@ class Experiment:
         self.ttl_clock.reset()
         self.ttl_clock.wait_for_first_ttl(wait = self.wait_ttl)
         run_data = []
-        run_end_timestamp = None
 
         # Start the eyetracker
         if self.const.eye_tracker:
@@ -164,8 +163,8 @@ class Experiment:
 
             # Add the end time of the task
             r_data['real_end_time'] = self.ttl_clock.get_time()
-            if getattr(self.const, 'record_run_end_timestamp', False) and t_num == len(self.task_obj_list) - 1:
-                run_end_timestamp = datetime.now().isoformat()
+            if getattr(self.const, 'record_task_end_timestamp', False):
+                r_data['task_end_timestamp'] = datetime.now().isoformat()
             run_data.append(r_data)
 
             # Optional: persist this task's data immediately so completed tasks survive a mid-run crash
@@ -191,8 +190,6 @@ class Experiment:
         if not getattr(self.const, 'save_per_task', False):
             # save the run data to the run file
             run_data.insert(0,'run_num',[self.run_number]*len(run_data))
-            if getattr(self.const, 'record_run_end_timestamp', False) and run_end_timestamp is not None:
-                run_data['run_end_timestamp'] = run_end_timestamp
             ut.append_data_to_file(self.run_data_file, run_data )
 
             for task in self.task_obj_list:
