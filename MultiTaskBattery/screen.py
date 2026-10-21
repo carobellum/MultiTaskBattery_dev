@@ -2,7 +2,6 @@
 from psychopy import visual, monitors
 from pyglet.canvas import get_display
 
-
 class Screen:
     def __init__(self, const):
         """    A class to create a screen for the experiment
@@ -18,9 +17,16 @@ class Screen:
         self.units    = 'deg'
         self.color    = '#808080'
         self.size     = const['size'] #[800, 800] #[1440, 900]
-        # physical width of the screen and eye-to-screen distance (cm); used to convert deg / cm to pixels
-        self.distance = const.get('distance', 57.0)
-        self.width    = const.get('width', 30.0)
+        # physical width of the screen and eye-to-screen distance (cm); used to convert deg / cm to pixels.
+        # Required: the window works in degrees, so a guessed value would silently change stimulus sizes.
+        missing = [key for key in ('width', 'distance') if const.get(key) is None]
+        if missing:
+            raise ValueError(
+                f"{' and '.join(f'screen[{k!r}]' for k in missing)} missing from constants.py. "
+                "Set screen['width'] to the physical width of the screen image in cm (measure it) "
+                "and screen['distance'] to the eye-to-screen distance in cm.")
+        self.distance = const['distance']
+        self.width    = const['width']
         self.allowGUI = True
         self.screen_number = const['number']
         self.monitor  = monitors.Monitor(
@@ -41,20 +47,6 @@ class Screen:
                              color = self.color,
                              allowGUI = self.allowGUI, allowStencil=True)
 
-        # Photodiode / MEG-timing marker: a small square in a screen corner that
-        # is flashed white on a stimulus-onset flip (see self.flip()). A photodiode
-        # taped over this corner records the true onset directly into the MEG/EEG
-        # recording. Position/size are in 'norm' units (bottom-right by default)
-        # and can be overridden with 'photodiode_pos'/'photodiode_size' in the
-        # screen constants. The square is only drawn when flip(marker=True) is
-        # called, so it is invisible/inert unless a task opts in.
-        pd_pos  = const.get('photodiode_pos', (0.9, -0.9)) if hasattr(const, 'get') else (0.9, -0.9)
-        pd_size = const.get('photodiode_size', 0.2) if hasattr(const, 'get') else 0.2
-        self.pd_square = visual.Rect(self.window, width=pd_size, height=pd_size,
-                                     units='norm', pos=pd_pos,
-                                     fillColor='white', lineColor=None, autoLog=False)
-        self.last_flip_time = None
-
     def check_monitors(self):
 
         display = get_display()
@@ -67,17 +59,17 @@ class Screen:
             exit(1)
 
 
-    def start_screen(self, color='white'):
+    def start_screen(self, color='white', height=None, wrap_width=None):
         """    A method to draw a start screen on the screen
         """
-        loading_msg = visual.TextStim(self.window, text="Preparing experiment...", color=color, height=2, wrapWidth=30)
+        loading_msg = visual.TextStim(self.window, text="Preparing experiment...", color=color, height=height or 2, wrapWidth=wrap_width or 30)
         loading_msg.draw()
         self.window.flip()
 
     def fixation_cross(self, color='white', flip=True):
         """    A method to draw a fixation cross on the screen
-        
-               Args: 
+
+               Args:
                     color (str):
                         color of the fixation cross
                     flip (bool):
@@ -94,15 +86,15 @@ class Screen:
             units='norm'
         )
         fixation.draw()
-        
+
         # Flip the screen only if flip is True
         if flip:
             self.window.flip()
 
     def check_mark(self, color='green', flip=True):
         """    A method to draw a check mark on the screen
-        
-               Args: 
+
+               Args:
                     color (str):
                         color of the check mark
                     flip (bool):
@@ -127,8 +119,8 @@ class Screen:
 
     def error_cross(self, color='red', flip=True):
         """    A method to draw an error cross on the screen
-        
-               Args: 
+
+               Args:
                     color (str):
                         color of the error cross
                     flip (bool):
@@ -158,34 +150,3 @@ class Screen:
         # Flip the screen only if flip is True
         if flip:
             self.window.flip()
-
-    def flip(self, marker=False, clock=None):
-        """Flip the window, optionally leaving a photodiode / MEG-timing marker.
-
-        Behaves like ``self.window.flip()`` but adds two things needed for
-        MEG/EEG (or any hardware) timing:
-
-        * ``marker=True`` draws the photodiode square (``self.pd_square``) white
-          in a screen corner *on this flip*. A photodiode taped over that corner
-          then records the true stimulus onset directly into the MEG/EEG file.
-        * ``clock`` (e.g. ``ttl_clock.clock``) is used to timestamp the flip via
-          ``callOnFlip``; the time is stored and returned so the caller can log
-          it (the ``flip_time`` column) for alignment with the recording.
-
-        Args:
-            marker (bool): if True, flash the photodiode square on this flip.
-            clock (psychopy.core.Clock or None): clock to timestamp the flip on.
-        Returns:
-            float or None: time of the flip on ``clock`` (None if no clock given).
-        """
-        if marker:
-            self.pd_square.draw()
-        self.last_flip_time = None
-        if clock is not None:
-            self.window.callOnFlip(self.store_flip_time, clock)
-        self.window.flip()
-        return self.last_flip_time
-
-    def store_flip_time(self, clock):
-        """callOnFlip callback: capture the flip time right after the buffer swap."""
-        self.last_flip_time = clock.getTime()

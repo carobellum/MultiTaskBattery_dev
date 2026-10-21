@@ -24,7 +24,8 @@ copyright = '2023-2026, Diedrichsenlab'
 author = 'Diedrichsenlab'
 
 # The full version, including alpha/beta/rc tags
-release = 'v1.1.0'
+import MultiTaskBattery
+release = 'v' + MultiTaskBattery.__version__
 
 
 # -- General configuration ---------------------------------------------------

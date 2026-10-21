@@ -31,15 +31,10 @@ Create a file called ``constants.py`` in the project folder. This file contains 
     package_dir = Path(os.path.dirname(os.path.dirname(os.path.realpath(mtb.__file__))))
     stim_dir   = package_dir / "stimuli"
 
-    # Optional: search several stimulus roots, local first. The package's own
-    # stimuli/ folder is always appended as a final fallback, so built-in tasks
-    # keep resolving. Use this to keep a custom task's stimuli in your
-    # experiment folder (see the "Implementing new tasks" page).
-    # stim_dirs = [exp_dir / "stimuli", stim_dir]
-
     # Optional: list of local Python modules that hold custom Task / TaskFile
     # classes. Uncomment and import your module if you want to add custom
-    # tasks without editing the shared MultiTaskBattery package. See
+    # tasks without editing the shared MultiTaskBattery package. A
+    # task_table.tsv and a stimuli/ folder next to the module are found too. See
     # the "Implementing new tasks" page for details and
     # experiments/example_custom_task for a working example.
     # import my_tasks
@@ -59,6 +54,8 @@ Create a file called ``constants.py`` in the project folder. This file contains 
     screen['size'] = [1100, 800]        # screen resolution
     screen['fullscr'] = False           # full screen?
     screen['number'] = 1                # 0 = main display, 1 = secondary display
+    screen['width'] = 53                # physical width of the screen image in cm (measure it)
+    screen['distance'] = 57             # eye-to-screen distance in cm
 
 Optional constants
 ^^^^^^^^^^^^^^^^^^
@@ -78,6 +75,23 @@ defaults are used.
      - ``None``
      - If set to a key name (e.g. ``'space'``), only that key will dismiss
        the run-feedback scoreboard screen. If ``None``, any key continues.
+   * - ``ttl_key``
+     - ``'t'``
+     - Key the scanner trigger (TTL) arrives as, or a list of keys that all
+       count (e.g. ``['t', '5']`` for a trigger box that can send either).
+   * - ``quit_key``
+     - ``'escape'``
+     - Key that closes the window and quits the experiment at any point once
+       the experiment window is open (instructions, waiting for the TTL,
+       trials, rest, scoreboard; not the run-info dialog). The run's data is
+       lost unless ``save_per_task`` is ``True``, in which case only the block
+       in progress is lost. Set to
+       ``None`` to disable, or pick a key that does not clash with the
+       response keys or ``ttl_key``.
+   * - ``show_scoreboard``
+     - ``True``
+     - If ``False``, the run-feedback scoreboard is not shown after a run;
+       the run ends and the next run-info dialog opens directly.
    * - ``scoreboard_text_height``
      - ``1.3``
      - Height (in degrees of visual angle) of the text on the run-feedback
@@ -87,37 +101,53 @@ defaults are used.
      - If ``True``, adds an ISO-format ``run_end_timestamp`` column to the run
        summary when each run completes (captured when the last task ends).
        Useful for post-processing that needs actual run-end wall-clock time.
+       With ``save_per_task``, only the last block's row has it.
+   * - ``record_task_end_timestamp``
+     - ``False``
+     - If ``True``, adds an ISO-format ``task_end_timestamp`` column to the run
+       summary: the wall-clock time each block ended. Useful for aligning
+       blocks with other recordings that log clock time.
+   * - ``save_per_task``
+     - ``False``
+     - If ``True``, each block's data is saved as soon as the block ends,
+       instead of all at once at the end of the run, so finished blocks
+       survive a crash or quit. Saving takes a few milliseconds between
+       blocks, which can delay the next block's start slightly.
    * - ``task_modules``
      - ``[]``
      - List of imported Python modules that hold custom Task and TaskFile
        classes for this experiment. ``ut.get_task_class`` and
        ``ut.get_task_file_class`` search these modules first, then fall back
-       to the shared ``MultiTaskBattery`` package. See :doc:`creating_tasks`.
-   * - ``task_tables``
-     - ``[]``
-     - List of further ``task_table.tsv`` paths, read after the package's table
-       and before the experiment's. Use this when your tasks live in a shared
-       library outside the experiment folder. See :doc:`creating_tasks`.
+       to the shared ``MultiTaskBattery`` package. A ``task_table.tsv`` and a
+       ``stimuli/`` folder next to a module are picked up too, so a task
+       library outside the experiment folder needs no further settings. See
+       :doc:`creating_tasks`.
    * - ``instruction_text_height``
      - ``1``
      - Height (in degrees of visual angle) of the instruction-screen text
        shown before each task.  Reduce for smaller screens.
+   * - ``instruction_wrap_width``
+     - ``30``
+     - Width (in degrees of visual angle) at which the instruction-screen text
+       wraps onto a new line.
    * - ``stim_dirs``
      - ``[stim_dir]``
-     - List of stimulus root directories, searched in order (local first). The
-       package's bundled ``stimuli`` folder is always appended as a final
-       fallback, so built-in tasks still resolve even when the first root is an
-       experiment-local folder. Use this to keep a custom task's stimuli in your
-       experiment folder. See :doc:`creating_tasks`.
+     - List of extra stimulus root directories, searched in order after the
+       ``stimuli/`` folders next to ``task_modules``. The package's bundled
+       ``stimuli`` folder is always appended as a final fallback. Only needed
+       for stimuli kept elsewhere (e.g. on another drive). See
+       :doc:`creating_tasks`.
 
 .. note::
 
    Display parameters are **per-task** and written into the task TSV files via
-   ``make_task_file()`` parameters — including the on-screen size of video and
-   image stimuli (``media_scale`` for video tasks, ``picture_scale`` for image
-   tasks).  See the :ref:`task descriptions <task_descriptions>` page.  The only
+   ``make_task_file()`` parameters — including the on-screen size of stimuli,
+   all in degrees of visual angle: ``text_height`` for task text, ``stim_width``
+   for pictures and videos (``stim_height`` for RMET).  See the
+   :ref:`task descriptions <task_descriptions>` page.  The only
    **experiment-wide** display settings that live in ``constants.py`` are
-   ``instruction_text_height`` and ``scoreboard_text_height``.
+   ``instruction_text_height``, ``instruction_wrap_width`` and
+   ``scoreboard_text_height``.
 
 
 Generating run and task files
@@ -187,7 +217,8 @@ Some tasks also have multiple **conditions** (e.g., ``reading`` has ``sentences`
 
         # Pass exp_dir so any local task_table.tsv (for custom tasks) is merged
         # with the framework's table.
-        T = tf.make_run_file(tasks, tfiles, exp_dir=const.exp_dir)
+        T = tf.make_run_file(tasks, tfiles, exp_dir=const.exp_dir,
+                             task_modules=getattr(const, 'task_modules', None))
         T.to_csv(const.run_dir / f'run_{r:02d}.tsv', sep='\t', index=False)
 
         # Generate a task file for each block
@@ -196,7 +227,8 @@ Some tasks also have multiple **conditions** (e.g., ``reading`` has ``sentences`
 
             # Resolve the TaskFile generator: a custom '<Class>File' in
             # const.task_modules if present, otherwise the built-in one.
-            cl = tf.get_task_class(task, exp_dir=const.exp_dir)
+            cl = tf.get_task_class(task, exp_dir=const.exp_dir,
+                                   task_modules=getattr(const, 'task_modules', None))
             myTask = ut.get_task_file_class(const, cl)(const)
 
             # Start from the block's task_dur, add its kwargs, and pass
