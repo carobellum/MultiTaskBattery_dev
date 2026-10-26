@@ -77,16 +77,21 @@ Alternative: Docker (Linux)
 ---------------------------
 
 The container has Python, PsychoPy, MTB and its stimuli preinstalled, so no
-clone or Python setup is needed. Install `Docker <https://docs.docker.com/engine/install/>`_,
+Python setup is needed. You only need ``docker/run_docker.sh`` from the
+repository (clone it, or download that one file). Install `Docker <https://docs.docker.com/engine/install/>`_,
 then pull the container::
 
     docker pull ghcr.io/diedrichsenlab/multitaskbattery:latest
 
 For a study, use a fixed release instead of ``latest`` (e.g.
-``multitaskbattery:1.2.0``), so every session and site runs exactly the same
+``multitaskbattery:1.2.1``), so every session and site runs exactly the same
 version.
 
 ``docker/run_docker.sh`` in the repository starts the container with access to
 the screen, sound and the scanner keyboard, and runs a Python script in it::
 
     bash docker/run_docker.sh <script.py>
+
+It uses ``latest`` by default. To use a fixed release, set ``MTB_VERSION``::
+
+    MTB_VERSION=1.2.1 bash docker/run_docker.sh <script.py>
