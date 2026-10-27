@@ -6,6 +6,9 @@
 
 A flexible Python toolbox for running multi-domain cognitive and motor tasks during fMRI sessions — all within a single scanning run. Built on [PsychoPy](https://www.psychopy.org/)
 
+[![Documentation](https://img.shields.io/badge/docs-readthedocs-blue)](https://multitaskbattery.readthedocs.io/)
+[![Interactive task map](https://img.shields.io/badge/explore-interactive%20task%20map-orange)](https://diedrichsenlab.github.io/MultiTaskBattery/mds/)
+
 
 This project runs multi-task batteries developed by the diedrichsenlab.
 #### Authors: Diedrichsenlab (Bassel Arafat, Caroline Nettekoven, Ince Husain, Ladan Shahshahani, Suzanne Witt, Maedbh King, Jorn Diedrichsen)
@@ -40,4 +43,4 @@ Open to issues and pull requests. If you use MTB in your research.
 
 If you use the toolbox please cite the following reference:
 
-Arafat, B., Nettekoven, C., Xiang, J. D., & Diedrichsen, J. (2026). Multi-Task Batteries for Precision Functional Mapping. *bioRxiv*, 2026-03.
+Arafat, B., Nettekoven, C., Xiang, J. D., & Diedrichsen, J. (2026). Multi-Task Batteries for Precision Functional Mapping. *eLife*, 15, RP111868. https://doi.org/10.7554/eLife.111868.1

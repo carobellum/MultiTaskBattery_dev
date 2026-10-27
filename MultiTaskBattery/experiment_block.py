@@ -6,7 +6,7 @@ import pandas as pd
 import sys
 import numpy as np
 from datetime import datetime
-from psychopy import visual, gui, event
+from psychopy import visual, gui, event, core
 import MultiTaskBattery.utils as ut
 import MultiTaskBattery.task_blocks as tasks
 from MultiTaskBattery.ttl_clock import TTLClock
@@ -24,10 +24,7 @@ class Experiment:
                     subj_id (str):
                         id for the subject
                     screen (Screen, optional):
-                        an existing Screen to reuse. If None (default), a new
-                        Screen/Window is opened. Passing an existing screen lets
-                        successive Experiments (e.g. consecutive phases) share a
-                        single window instead of opening a new one each time.
+                        an existing Screen to reuse; if None, a new one is opened
                 Returns:
                     self (object):
                         an instance of the Experiment class
@@ -38,11 +35,19 @@ class Experiment:
         self.run_number = 0
         self.const = const
         self.ttl_clock = TTLClock()
+        self.ttl_clock.ttl_button = getattr(const, 'ttl_key', 't')  # key the scanner trigger sends; differs by site
         # open screen and display fixation cross
         ### set the resolution of the subject screen here:
-        # Reuse an existing screen if one was passed in (so consecutive runs/phases
-        # share a single window); otherwise open a new one.
         self.screen = screen if screen is not None else Screen(const.screen)
+
+        # quit key: works at any point of the experiment (checked on every flip / key read); set quit_key = None in constants.py to disable
+        quit_key = getattr(const, 'quit_key', 'escape')
+        if quit_key:
+            try:
+                event.globalKeys.remove(quit_key)  # set by an earlier Experiment in this session
+            except KeyError:
+                pass
+            event.globalKeys.add(key=quit_key, func=self.quit, name='quit')
 
         # connect to the eyetracker already
         if self.const.eye_tracker:
@@ -54,6 +59,11 @@ class Experiment:
             ## set the ip address of the EyeLink ethernet connection
             ## to 100.1.1.2 and the subnet mask to 255.255.255.0
             self.tk = pl.EyeLink('100.1.1.1')
+
+    def quit(self):
+        """Closes the window and quits the experiment (bound to const.quit_key)."""
+        self.screen.window.close()
+        core.quit()
 
     def confirm_run_info(self):
         """
@@ -68,7 +78,8 @@ class Experiment:
         """
         if not self.const.debug:
             # Step 1: Create a temporary small window for user feedback
-            self.screen.start_screen()
+            self.screen.start_screen(height=getattr(self.const, 'instruction_text_height', None),
+                                     wrap_width=getattr(self.const, 'instruction_wrap_width', None))
 
             # a dialog box pops up so you can enter info
             #Set up input box
@@ -108,7 +119,7 @@ class Experiment:
 
         # 2. Initialize the all tasks that we need
         self.task_obj_list = [] # a list containing task objects in the run
-        task_table = ut.get_task_table(self.const.exp_dir, getattr(self.const, 'task_tables', None)) # Get the task table for the experiment, which is a combination of the general task table and the experiment-specific task table (if it exists)
+        task_table = ut.get_task_table(self.const.exp_dir, getattr(self.const, 'task_modules', None)) # Get the task table for the experiment: next to the task modules, the experiment's own table (if it exists), then the general task table
         for t_num, task_info in self.run_info.iterrows():
             # create a task object for the current task, reads the trial file, and append it to the list
             t = task_table[task_table['name']== task_info.task_name]
@@ -124,7 +135,7 @@ class Experiment:
                                  subj_id = self.subj_id)
             Task_obj.init_task()
             self.task_obj_list.append(Task_obj)
-        
+
         # 3. make subject folder in data/raw/<subj_id>
         subj_dir = self.const.data_dir / self.subj_id
         ut.dircheck(subj_dir) # making sure the directory is created!
@@ -150,7 +161,7 @@ class Experiment:
             event.clearEvents()
 
             # padded, to overwrite the TR counter line (printed with end='\r')
-            print(f"Starting task {t_num+1}: {task.name}".ljust(60))
+            print(f"Starting block {t_num+1}: {task.name}".ljust(60))
 
             # Take the task data from the run_info dataframe
             r_data = self.run_info.iloc[t_num].copy()
@@ -165,7 +176,7 @@ class Experiment:
             # display the instruction text for the task. (instructions are task specific)
             if r_data.instruction_dur > 0:
                 task.display_instructions()
-                
+
                 # wait for a time period equal to instruction duration
                 self.ttl_clock.wait_until(r_data.start_time + r_data.instruction_dur)
 
@@ -194,7 +205,7 @@ class Experiment:
             self.screen.fixation_cross()
 
             # If last task, wait until the endtime for the last task, which for imaging could be longer than the task duration
-            # Note that endtime is not used for any task but the last one 
+            # Note that endtime is not used for any task but the last one
             if t_num == len(self.task_obj_list)-1:
                 self.ttl_clock.wait_until(self.ttl_clock.get_time() + 1.5)
                 self.screen.fixation_cross()
@@ -216,8 +227,9 @@ class Experiment:
             for task in self.task_obj_list:
                 task.save_data(self.subj_id, self.run_number)
 
-        # show the scoreboard
-        self.display_run_feedback(run_data)
+        # show the scoreboard (set show_scoreboard = False in constants.py to skip it)
+        if getattr(self.const, 'show_scoreboard', True):
+            self.display_run_feedback(run_data)
 
 
     def display_run_feedback(self, run_data):
@@ -244,12 +256,12 @@ class Experiment:
                 accuracy = f"{int(acc*100)} %" if not np.isnan(acc) else "-"
                 rt = f"{run_data.rt[r]:.2f} s" if not np.isnan(run_data.rt[r]) else "-"
                 scores.append([task_name, accuracy, rt])
-        
+
         # Display settings
         # Height of the text elements: allow experiment-specific override via
         # const.scoreboard_text_height; fall back to original default (1.3 deg).
         height = getattr(self.const, 'scoreboard_text_height', None) or 1.3
-        gap = [8,1.6] # Gap between entries for the score column [gap_between_columns, gap_between_rows]
+        gap = [8 * height / 1.3, 1.6 * height / 1.3] # Gap between entries [between_columns, between_rows]; scales with height so the whole board shrinks together
         cols=len(scores[0])
         rws=len(scores)
 
@@ -257,7 +269,7 @@ class Experiment:
         scores_flat = [item for sublist in scores for item in sublist]
 
         # Generate position points
-        points = np.array([[(1 + i - (cols + 1) / 2) * gap[0], (1 + j - (rws + 1) / 2) * gap[1]] 
+        points = np.array([[(1 + i - (cols + 1) / 2) * gap[0], (1 + j - (rws + 1) / 2) * gap[1]]
                         for j in range(rws) for i in range(cols)])
         # Reverse the order of the rows (to run from top to bottom)
         points = points.reshape(rws, cols, 2)[::-1].reshape(-1, 2)
@@ -265,14 +277,19 @@ class Experiment:
         # Make the score display elements
         elements = []
         for Idx in range(len(scores_flat)):
-            element = visual.TextStim(win=self.screen.window, 
+            # The task names are the first column. Anchor them on the right so that a
+            # long name grows away from the scores instead of running into them.
+            name_column = Idx % cols == 0
+            element = visual.TextStim(win=self.screen.window,
                         text = str(scores_flat[Idx]), # Variable text
-                        font = 'Lucida Console',
+                        font = 'Ubuntu Mono',
                         pos = points[Idx],
-                        height = height, 
-                        wrapWidth = 100, 
+                        height = height,
+                        wrapWidth = 100,
                         color=[-1, -1, -1],
                         ori = 0,
+                        anchorHoriz = 'right' if name_column else 'center',
+                        alignText = 'right' if name_column else 'center',
                         units='deg')
             elements.append(element)
         # Draw the scores

@@ -87,7 +87,7 @@ def make_run_file(task_list,
                   keep_in_middle=None,
                   shuffle=True,
                   exp_dir=None,
-                  task_tables=None):
+                  task_modules=None):
     """
     Make a single run file.
 
@@ -107,7 +107,7 @@ def make_run_file(task_list,
         shuffle (bool): If False, the blocks are kept in the order given in
             task_list (for designs that need a fixed block order).
         exp_dir (str, Path): Experiment directory, used to load the task table.
-        task_tables (list): Further task_table.tsv paths (see ut.get_task_table).
+        task_modules (list): const.task_modules, whose task tables are read too (see ut.get_task_table).
 
     Any list passed for instruction_dur/task_dur must have one value per task.
     The per-task durations are stored as columns and travel with their task
@@ -117,7 +117,7 @@ def make_run_file(task_list,
     Returns:
         pd.DataFrame: the run file (one row per block, with start/end times).
     """
-    task_table = ut.get_task_table(exp_dir, task_tables)
+    task_table = ut.get_task_table(exp_dir, task_modules)
     # Get rows of the task_table corresponding to the task_list
     indx = [np.where(task_table['name']==t)[0][0] for t in task_list]
     n = len(task_list)
@@ -137,16 +137,16 @@ def make_run_file(task_list,
     R = add_start_end_times(R, offset, run_time=run_time)
     return R
 
-def get_task_class(name, exp_dir=None, task_tables=None):
+def get_task_class(name, exp_dir=None, task_modules=None):
     """Creates an object of the task class based on the task name
     Args:
         name (str): name of the task
         exp_dir (str, path, optional): path to the experiment directory
-        task_tables (list, optional): further task_table.tsv paths (see ut.get_task_table)
+        task_modules (list, optional): const.task_modules, whose task tables are read too (see ut.get_task_table)
     Returns:
         class_name (str): class name for task
     """
-    task_table = ut.get_task_table(exp_dir, task_tables)
+    task_table = ut.get_task_table(exp_dir, task_modules)
     index = np.where(task_table['name']==name)[0][0]
     class_name = task_table.iloc[index]['task_class']
     return class_name
@@ -176,7 +176,7 @@ class NBack(TaskFile): # with the 5 stimuli used here only 1-back/2-back/3-back 
                         task_dur =  30,
                         trial_dur = 2,
                         iti_dur   = 0.5,
-                        picture_scale = 1.0,
+                        stim_width = 18.4,
                         n_back = 2, # number of items back a match refers to (2 = classic 2-back)
                         stim = ['9.jpg','11.jpg','18.jpg','28.jpg'],
                         file_name = None ):
@@ -189,7 +189,7 @@ class NBack(TaskFile): # with the 5 stimuli used here only 1-back/2-back/3-back 
             task_dur (float): Total task duration in seconds.
             trial_dur (float): Duration each stimulus is displayed in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
-            picture_scale (float): Scaling factor for stimulus images (>1 enlarges).
+            stim_width (float): Width of the pictures / clips in degrees of visual angle (height keeps the aspect ratio).
             n_back (int): How many items back a match refers to (2 = classic 2-back).
             stim (list): List of stimulus image filenames to draw from.
             file_name (str): Name of the file to save the task data.
@@ -208,7 +208,7 @@ class NBack(TaskFile): # with the 5 stimuli used here only 1-back/2-back/3-back 
             trial['hand'] = hand
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
-            trial['picture_scale'] = picture_scale
+            trial['stim_width'] = stim_width
             # The n-back level is recorded once, as the modeling-level condition
             # (e.g. '2-back'). n_back itself is only a generation parameter, so it
             # is not duplicated as its own column - the runtime derives n from here.
@@ -285,7 +285,8 @@ class VerbGeneration(TaskFile):
                         iti_dur   = 0.5,
                         order = 'blocked',
                         file_name = None,
-                        stim_file = None):
+                        stim_file = None,
+                        text_height=2):
         """
         Create a verb-generation task file.
 
@@ -303,6 +304,7 @@ class VerbGeneration(TaskFile):
                 'random' assigns a balanced set in random order. Ignored for a
                 single condition.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
             stim_file (str): Optional path to a custom word-list CSV. Defaults to
                 the packaged verb_generation.csv.
 
@@ -348,6 +350,7 @@ class VerbGeneration(TaskFile):
             selected_stim = stim.iloc[n]['word']
             trial = {}
             trial['trial_num'] = n
+            trial['text_height'] = text_height
             trial['condition'] = trial_conditions[n]
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
@@ -421,7 +424,9 @@ class MotorLocalizer(TaskFile):
                         task_dur=30,
                         trial_dur=1,
                         condition=['hand', 'foot', 'tongue'],
-                        file_name=None):
+                        file_name=None,
+                        text_height=1.5,
+                        label_y=6):
         """
         Create a motor-localizer task file. The block is split into one equal
         segment per condition (segment_dur = task_dur / len(condition), e.g.
@@ -442,6 +447,8 @@ class MotorLocalizer(TaskFile):
             trial_dur (float): Circle on/off toggle interval within a segment (seconds).
             condition (str or list): Condition label(s), e.g. body parts; each gets an equal, randomly ordered share of the block.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
+            label_y (float): Height of the condition label above the centre, in degrees of visual angle.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -458,6 +465,8 @@ class MotorLocalizer(TaskFile):
             for p in range(n_phases):
                 trial = {}
                 trial['trial_num'] = n
+                trial['text_height'] = text_height
+                trial['label_y'] = label_y
                 trial['condition'] = cond
                 trial['trial_type'] = 1 - (p % 2)        # 1 = circle present, 0 = circle absent
                 trial['trial_dur'] = trial_dur
@@ -603,6 +612,7 @@ class TheoryOfMind(TaskFile):
                         story_dur=10,
                         question_dur=4,
                         text_height=1.25,
+                        wrap_width=25,
                         file_name=None,
                         stim_file=None,
                         condition=None):
@@ -619,6 +629,7 @@ class TheoryOfMind(TaskFile):
             story_dur (float): Duration the story is displayed in seconds.
             question_dur (float): Duration the question is displayed in seconds.
             text_height (float): Height of the story/question text in degrees of visual angle.
+            wrap_width (float): Width the story/question text wraps at, in degrees of visual angle.
             file_name (str): Name of the file to save the task data.
             stim_file (str): Optional path to a custom stimulus CSV.
             condition (str): If set, only trials of this condition are included
@@ -672,6 +683,7 @@ class TheoryOfMind(TaskFile):
             trial['story_dur'] = story_dur
             trial['question_dur'] = question_dur
             trial['text_height'] = text_height
+            trial['wrap_width'] = wrap_width
             trial['display_trial_feedback'] = True
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
@@ -775,7 +787,8 @@ class ActionObservation(TaskFile):
                         task_dur=30,
                         trial_dur=14,
                         iti_dur=1,
-                        file_name=None):
+                        file_name=None,
+                        stim_width=18.4):
         """
         Create an action-observation task file (knot-tying videos).
 
@@ -785,6 +798,7 @@ class ActionObservation(TaskFile):
             trial_dur (float): Duration of each video trial in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
             file_name (str): Name of the file to save the task data.
+            stim_width (float): Width of the pictures / clips in degrees of visual angle (height keeps the aspect ratio).
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -797,6 +811,7 @@ class ActionObservation(TaskFile):
         for n in range(n_trials):
             trial = {}
             trial['trial_num'] = n
+            trial['stim_width'] = stim_width
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
             knot_index = (run_number - 1) % len(self.knot_names)
@@ -1004,7 +1019,10 @@ class DemandGrid(TaskFile):
                    sequence_dur=4,
                    iti_dur=0.5,
                    condition=None,
-                   file_name=None):
+                   file_name=None,
+                   square_size=1.5,
+                   answer_offset=5,
+                   display_feedback=True):
         """
         Create a task file with the specified parameters.
 
@@ -1020,6 +1038,9 @@ class DemandGrid(TaskFile):
             sequence_dur (float): Duration of the sequence presentation phase.
             iti_dur (float): Inter-trial interval duration.
             file_name (str): Name of the file to save the task data.
+            square_size (float): Side of one grid square in degrees of visual angle.
+            answer_offset (float): Horizontal distance of each answer grid's centre from the screen centre, in degrees (increase it with square_size so the grids don't overlap).
+            display_feedback (bool): Show a check mark / cross after each response; if False, a white fixation cross.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -1049,11 +1070,13 @@ class DemandGrid(TaskFile):
                 'trial_num': n,
                 'hand': hand,
                 'grid_size': grid_size,
+                'square_size': square_size,
+                'answer_offset': answer_offset,
                 'num_steps': num_steps,
                 'original_sequence': list(itertools.chain.from_iterable(original_sequence)),
                 'modified_sequence': list(itertools.chain.from_iterable(modified_sequence))  ,
                 **{f'original_step_{i+1}': step for i, step in enumerate(original_sequence)},  # Unpack original steps (each grid shown in the exp)
-                'display_trial_feedback': True,
+                'display_trial_feedback': display_feedback,
                 'trial_dur': trial_dur,
                 'sequence_dur': sequence_dur,
                 'question_dur': question_dur,
@@ -1088,7 +1111,9 @@ class Reading(TaskFile):
                         trial_dur=5.8,
                         iti_dur=0.2,
                         file_name=None,
-                        stim_file=None):
+                        stim_file=None,
+                        text_height=2,
+                        stim_width=14.4):
         """
         Create a reading task file (sentences or nonwords, shown word by word).
 
@@ -1099,6 +1124,8 @@ class Reading(TaskFile):
             trial_dur (float): Duration of each sentence presentation in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
+            stim_width (float): Width of the pictures / clips in degrees of visual angle (height keeps the aspect ratio).
             stim_file (str): Optional path to a custom stimulus CSV.
 
         Returns:
@@ -1125,6 +1152,8 @@ class Reading(TaskFile):
         for n in range(n_trials):
             trial = {}
             trial['trial_num'] = n
+            trial['text_height'] = text_height
+            trial['stim_width'] = stim_width
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
             trial['condition'] = condition
@@ -1155,7 +1184,8 @@ class OddBall(TaskFile):
                     task_dur=30,
                     trial_dur=0.15,
                     iti_dur=0.85,
-                    file_name=None):
+                    file_name=None,
+                    text_height=1.5):
         """
         Create an oddball-detection task file (respond only to a red 'K').
 
@@ -1166,6 +1196,7 @@ class OddBall(TaskFile):
             trial_dur (float): Duration the stimulus is displayed in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -1173,7 +1204,10 @@ class OddBall(TaskFile):
         n_trials = int(np.floor(task_dur / (trial_dur + iti_dur)))
         trial_info = []
 
-        stimuli = ['black_K'] * 12 + ['black_O'] * 12 + ['red_K'] * 3 + ['red_O'] * 3
+        # 10% red K (targets), 10% red O, rest split between black K and black O
+        n_red = round(n_trials * 0.1)
+        n_black = n_trials - 2 * n_red
+        stimuli = ['black_K'] * (n_black - n_black // 2) + ['black_O'] * (n_black // 2) + ['red_K'] * n_red + ['red_O'] * n_red
 
         # shuffle stimuli
         random.shuffle(stimuli)
@@ -1184,6 +1218,7 @@ class OddBall(TaskFile):
             trial = {}
             trial['key_one'] = responses[0]
             trial['trial_num'] = n
+            trial['text_height'] = text_height
             trial['hand'] = hand
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
@@ -1220,7 +1255,8 @@ class FingerSequence(TaskFile):
                         task_dur=30,
                         trial_dur=3.25,
                         iti_dur=0.5,
-                        file_name=None):
+                        file_name=None,
+                        text_height=1.5):
         """
         Create a finger-sequence task file (press a 6-digit sequence in order).
         Each digit (1-4) is the finger/key to press; scoring compares the pressed
@@ -1232,6 +1268,7 @@ class FingerSequence(TaskFile):
             trial_dur (float): Duration of each trial in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -1244,6 +1281,7 @@ class FingerSequence(TaskFile):
         for n in range(n_trials):
             trial = {}
             trial['trial_num'] = n
+            trial['text_height'] = text_height
             trial['hand'] = hand
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
@@ -1272,7 +1310,8 @@ class FlexionExtension(TaskFile):
     def make_task_file(self,
                         task_dur = 30,
                         stim_dur = 2,
-                        file_name = None):
+                        file_name = None,
+                        text_height=1.5):
         """
         Create a flexion-extension (toe movement) task file. The block is paced
         by a cue that alternates between 'flexion' and 'extension' every stim_dur
@@ -1283,6 +1322,7 @@ class FlexionExtension(TaskFile):
             task_dur (float): Total duration of the block in seconds.
             stim_dur (float): Duration each cue ('flexion'/'extension') is shown.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -1296,6 +1336,7 @@ class FlexionExtension(TaskFile):
                 'trial_num': n,
                 'stim': cues[n % 2],
                 'trial_dur': stim_dur,
+                'text_height': text_height,
                 'start_time': t,
                 'end_time': t + stim_dur,
             })
@@ -1319,7 +1360,8 @@ class SemanticPrediction(TaskFile):
                         sentence_dur=2,
                         file_name=None,
                         stim_file=None,
-                        stim=None):
+                        stim=None,
+                        text_height=2):
         """
         Create a semantic-prediction task file (judge whether the final word
         makes the sentence meaningful).
@@ -1332,6 +1374,7 @@ class SemanticPrediction(TaskFile):
             trial_dur (float): Total duration budgeted for each trial in seconds.
             sentence_dur (float): Response window for the final word, in seconds.
             file_name (str): Name of the file to save the task data.
+            text_height (float): Height of the task text in degrees of visual angle.
             stim_file (str): Optional path to a custom stimulus CSV.
             stim (pd.DataFrame): Optional pre-loaded stimulus table.
 
@@ -1360,6 +1403,7 @@ class SemanticPrediction(TaskFile):
             trial['key_true'] = responses[0]
             trial['key_false'] = responses[1]
             trial['trial_num'] = n
+            trial['text_height'] = text_height
             trial['hand'] = hand
             trial['trial_dur'] = trial_dur
             trial['sentence_dur'] = sentence_dur
@@ -1393,6 +1437,8 @@ class VisualSearch(TaskFile):
                         trial_dur = 2,
                         iti_dur   = 0.5,
                         easy_prob=0.5,
+                        search_width=28,
+                        search_height=20,
                         file_name = None ):
         """
         Create a visual-search task file (find a canonically-oriented 'L').
@@ -1404,6 +1450,7 @@ class VisualSearch(TaskFile):
             trial_dur (float): Duration of each trial in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
             easy_prob (float): Probability of an easy trial (4 stimuli vs. 8).
+            search_width, search_height (float): Size of the area the items are spread over, in degrees of visual angle.
             file_name (str): Name of the file to save the task data.
 
         Returns:
@@ -1425,6 +1472,8 @@ class VisualSearch(TaskFile):
             trial['trial_type'] = random.choice([0,1])
             # Difficulty is the condition: the number of search items (set size).
             trial['condition'] = '4-items' if random.random() < easy_prob else '8-items'
+            trial['search_width'] = search_width
+            trial['search_height'] = search_height
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
             trial_info.append(trial)
@@ -1452,9 +1501,9 @@ class RMET(TaskFile):
                         task_dur=30,
                         trial_dur=6,
                         iti_dur=1.5,
-                        option_text_height=1.2,
+                        text_height=1.2,
                         option_position_scale=1.0,
-                        picture_scale=0.7,
+                        stim_height=6.0,
                         show_last_seconds=0,
                         file_name=None,
                         stim_file = None,
@@ -1471,9 +1520,9 @@ class RMET(TaskFile):
             task_dur (float): Total task duration in seconds.
             trial_dur (float): Duration each stimulus is displayed in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
-            option_text_height (float): Height of the answer-option text in degrees of visual angle.
+            text_height (float): Height of the task text in degrees of visual angle.
             option_position_scale (float): Spatial scaling for option positions (<1 brings them closer).
-            picture_scale (float): Scaling of the eye-region image (>1 enlarges).
+            stim_height (float): Height of the pictures in degrees of visual angle (width keeps the aspect ratio).
             show_last_seconds (float): If >0, show options only for the final N seconds of the trial.
             file_name (str): Name of the file to save the task data.
             stim_file (str): Optional path to a custom stimulus CSV.
@@ -1535,9 +1584,9 @@ class RMET(TaskFile):
             trial['hand'] = hand
             trial['trial_dur'] = trial_dur
             trial['iti_dur'] = iti_dur
-            trial['option_text_height'] = option_text_height
+            trial['text_height'] = text_height
             trial['option_position_scale'] = option_position_scale
-            trial['picture_scale'] = picture_scale
+            trial['stim_height'] = stim_height
             trial['stim'] = stim['picture'][n]
             trial['options'] = stim['options'][n]
             trial['condition'] = stim['condition'][n]
@@ -1572,7 +1621,7 @@ class Movie(TaskFile):
                        file_name=None,
                        stim_file=None,
                        condition=None,
-                       media_scale=0.4):
+                       stim_width=22):
         """
         Create a movie-watching task file (passive viewing of a 30s clip).
 
@@ -1585,7 +1634,7 @@ class Movie(TaskFile):
             stim_file (str): Optional path to a custom stimulus CSV.
             condition (str): Which clips to use ('romance', 'nature', "animation" or
                 'landscape'). If None, all non-practice clips are used.
-            media_scale (float): Clip width as a fraction of the window width.
+            stim_width (float): Width of the pictures / clips in degrees of visual angle (height keeps the aspect ratio).
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -1625,7 +1674,7 @@ class Movie(TaskFile):
             trial['iti_dur'] = iti_dur
             trial['stim'] = stim['video'][n]
             trial['condition'] = stim['condition'][n]
-            trial['media_scale'] = media_scale
+            trial['stim_width'] = stim_width
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
             trial_info.append(trial)
@@ -1654,6 +1703,7 @@ class FauxPas(TaskFile):
                     story_dur=10,
                     question1_dur=4,
                     text_height=1.25,
+                    wrap_width=None,   # deg; None keeps the defaults (story 20, question 25)
                     file_name=None,
                     stim_file=None,
                     condition=None,
@@ -1727,6 +1777,8 @@ class FauxPas(TaskFile):
             trial['story_dur'] = story_dur
             trial['question_dur'] = question1_dur
             trial['text_height'] = text_height
+            if wrap_width is not None:
+                trial['wrap_width'] = wrap_width
             trial['display_trial_feedback'] = True
             trial['start_time'] = t
             trial['end_time'] = t + trial_dur + iti_dur
@@ -1751,7 +1803,8 @@ class Affective(TaskFile):
                        iti_dur=0.4,
                        file_name=None,
                        hand='right',
-                       responses=[1,2]):
+                       responses=[1,2],
+                       stim_width=18.4):
         """
         Create an affective-picture task file (judge pleasant vs unpleasant).
 
@@ -1760,6 +1813,7 @@ class Affective(TaskFile):
             trial_dur (float): Duration each image is displayed in seconds.
             iti_dur (float): Inter-trial interval duration in seconds.
             file_name (str): Name of the file to save the task data.
+            stim_width (float): Width of the pictures / clips in degrees of visual angle (height keeps the aspect ratio).
             hand (str): Hand used for response ('right' or 'left').
             responses (list): Response keys for [unpleasant, pleasant].
 
@@ -1787,6 +1841,7 @@ class Affective(TaskFile):
         for n in range(n_trials):
             trial = {}
             trial['trial_num'] = n
+            trial['stim_width'] = stim_width
             trial['stim'] = stim[n]['imgName']
             trial['trial_type'] = stim[n]['trialType']
             trial['hand'] = hand
