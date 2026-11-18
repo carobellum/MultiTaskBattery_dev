@@ -2,12 +2,17 @@
 # March 2021: First version: Ladan Shahshahani  - Maedbh King - Suzanne Witt,
 # Revised 2023: Bassel Arafat, Jorn Diedrichsen, Ince Husain
 
+import json
+import os
 import pandas as pd
 import sys
 import numpy as np
 from datetime import datetime
-from psychopy import visual, gui, event, core
+import psychopy
+from psychopy import visual, gui, event, core, logging
+import MultiTaskBattery
 import MultiTaskBattery.utils as ut
+import MultiTaskBattery.gamepad as gamepad
 import MultiTaskBattery.task_blocks as tasks
 from MultiTaskBattery.ttl_clock import TTLClock
 from MultiTaskBattery.screen import Screen
@@ -40,6 +45,9 @@ class Experiment:
         ### set the resolution of the subject screen here:
         self.screen = screen if screen is not None else Screen(const.screen)
 
+        # game controller: set gamepad_buttons in constants.py to answer with a pad (see gamepad.py)
+        gamepad.setup(const)
+
         # quit key: works at any point of the experiment (checked on every flip / key read); set quit_key = None in constants.py to disable
         quit_key = getattr(const, 'quit_key', 'escape')
         if quit_key:
@@ -49,8 +57,11 @@ class Experiment:
                 pass
             event.globalKeys.add(key=quit_key, func=self.quit, name='quit')
 
+        # eye tracking is optional: set eye_tracker = True in constants.py to enable (default False)
+        self.eye_tracker = getattr(const, 'eye_tracker', False)
+
         # connect to the eyetracker already
-        if self.const.eye_tracker:
+        if self.eye_tracker:
             import pylink as pl
             self.pl = pl  # keep a handle so run() can call pylink (optional import, only when eye_tracker=True)
             # create an Eyelink class
@@ -61,9 +72,106 @@ class Experiment:
             self.tk = pl.EyeLink('100.1.1.1')
 
     def quit(self):
-        """Closes the window and quits the experiment (bound to const.quit_key)."""
-        self.screen.window.close()
-        core.quit()
+        """Closes the window and quits the experiment (bound to const.quit_key).
+        Exits with code 3, so a script that started the run can tell it was stopped.
+        The window closes as the program exits (closing it here, inside PsychoPy's key
+        check, makes PsychoPy fail while it goes through its open windows).
+        os._exit, not sys.exit: on Windows the key arrives in a callback of the window,
+        which swallows a SystemExit, so sys.exit there does not stop the run."""
+        if getattr(self, 'manifest', None):
+            self.write_manifest('stopped')
+            self.write_events()   # the blocks finished before Esc
+        logging.flush()
+        sys.stdout.flush()
+        sys.stderr.flush()
+        os._exit(3)
+
+    def write_events(self):
+        """Writes a BIDS events file for this scan into <subj>/events/, named by scan_num
+        (sub-<subj>_task-<exp_name>_run-<scan_num>_events.tsv), so it can be copied into a BIDS
+        folder as it is. One row for each instruction period ('instruction') and one for each
+        task period (trial_type = task name, plus the condition when the block has one).
+        Onsets are seconds since the first scanner trigger. Only for runs that waited for the
+        trigger; turn on with write_events = True in constants.py (off by default)."""
+        if not getattr(self.const, 'write_events', False) or getattr(self, 'scan_num', None) is None:
+            return
+        if not self.run_data_file.exists():
+            return
+        blocks = pd.read_csv(self.run_data_file, sep='\t')
+        blocks = blocks[(blocks.run_num == self.run_number) & (blocks.attempt == self.attempt)]
+        rows = []
+        for task, (_, b) in zip(self.task_obj_list, blocks.iterrows()):
+            if b.real_task_start_time > b.real_block_start_time:
+                rows.append([b.real_block_start_time, b.real_task_start_time - b.real_block_start_time, 'instruction'])
+            trial_type = b.task_name
+            conds = task.trial_info['condition'].unique() if 'condition' in task.trial_info else []
+            if len(conds) == 1:
+                trial_type += f'_{conds[0]}'
+            rows.append([b.real_task_start_time, b.real_task_end_time - b.real_task_start_time, trial_type])
+        events = pd.DataFrame(rows, columns=['onset', 'duration', 'trial_type']).round(3)
+        sub = ''.join(c for c in str(self.subj_id).removeprefix('sub-') if c.isalnum())
+        task_label = ''.join(c for c in str(self.exp_name) if c.isalnum())
+        events_dir = self.const.data_dir / self.subj_id / 'events'
+        events_dir.mkdir(exist_ok=True)
+        events.to_csv(events_dir / f'sub-{sub}_task-{task_label}_run-{self.scan_num:02d}_events.tsv',
+                      sep='\t', index=False)
+
+    def write_manifest(self, status):
+        """Writes <subj_id>_run-<NN>_attempt-<k>_manifest.json next to the subject's data: what
+        the run ran under (versions, the simple settings of constants.py, the display that opened)
+        and its status: 'running' at the start, then 'finished' or 'stopped' (a crash leaves
+        'running'). The attempt k counts the tries at this run: 1, then 2 for a rerun, and so on;
+        it is also saved on every data row, so the tries stay apart. The first call of a run
+        writes the file; later calls update it."""
+        subj_dir = self.const.data_dir / self.subj_id
+        name = f"{self.subj_id}_run-{self.run_number:02d}_attempt-"
+        if not getattr(self, 'manifest', None):
+            self.attempt = len(list(subj_dir.glob(name + '*_manifest.json'))) + 1
+            settings = {}
+            for key in dir(self.const):
+                value = getattr(self.const, key)
+                if key.startswith('_'):
+                    continue
+                try:
+                    json.dumps(value)    # keep only values a json file can hold (no folders, modules)
+                    settings[key] = value
+                except TypeError:
+                    pass
+            window = self.screen.window
+            self.manifest = {
+                'subject': self.subj_id,
+                'run_number': self.run_number,
+                'attempt': self.attempt,
+                'scan_num': None,
+                'run_file': str(self.const.run_dir / self.run_filename),
+                'wait_ttl': self.wait_ttl,
+                'status': status,
+                'start_time': datetime.now().isoformat(timespec='seconds'),
+                'end_time': None,
+                'versions': {'MultiTaskBattery': MultiTaskBattery.__version__,
+                             'psychopy': psychopy.__version__,
+                             'python': sys.version.split()[0]},
+                'display': {'window_size': [int(s) for s in window.size],
+                            'refresh_rate_hz': round(1 / window.monitorFramePeriod, 2)},
+                'settings': settings,
+            }
+        else:
+            self.manifest['status'] = status
+            if status != 'running':
+                self.manifest['end_time'] = datetime.now().isoformat(timespec='seconds')
+        manifest_file = subj_dir / f"{name}{self.attempt}_manifest.json"
+        with open(manifest_file, 'w') as f:
+            json.dump(self.manifest, f, indent=2)
+
+    def count_scan(self):
+        """Called once the first scanner trigger has arrived: scan_num is 1 + the number of this
+        subject's earlier runs that got a trigger, so it matches the scanner's own count of scans
+        (run 5 repeated after run 8 is scan 9). Without a trigger (wait_ttl False) it stays None."""
+        subj_dir = self.const.data_dir / self.subj_id
+        earlier = [json.load(open(f)).get('scan_num') for f in subj_dir.glob(f"{self.subj_id}_run-*_manifest.json")]
+        self.scan_num = sum(s is not None for s in earlier) + 1
+        self.manifest['scan_num'] = self.scan_num
+        self.write_manifest('running')
 
     def confirm_run_info(self):
         """
@@ -76,36 +184,28 @@ class Experiment:
 
         Args:
         """
-        if not self.const.debug:
-            # Step 1: Create a temporary small window for user feedback
-            self.screen.start_screen(height=getattr(self.const, 'instruction_text_height', None),
-                                     wrap_width=getattr(self.const, 'instruction_wrap_width', None))
+        # Step 1: Create a temporary small window for user feedback
+        self.screen.start_screen(height=getattr(self.const, 'instruction_text_height', None),
+                                 wrap_width=getattr(self.const, 'instruction_wrap_width', None))
 
-            # a dialog box pops up so you can enter info
-            #Set up input box
-            inputDlg = gui.Dlg(title = f"{self.exp_name}")
-            inputDlg.addField('Enter Subject id (str):',initial = self.subj_id)      # run number (int)
-            inputDlg.addField('Enter Run Number (int):',initial = self.run_number+1)      # run number (int)
-            inputDlg.addField('Run File name (str):',initial = self.const.default_run_filename.format(f'{self.run_number + 1:02d}'))      # run number (int)
-            inputDlg.addField('Wait for TTL pulse?', initial = True) # a checkbox for ttl pulse (set it true for scanning)
+        # a dialog box pops up so you can enter info
+        #Set up input box
+        inputDlg = gui.Dlg(title = f"{self.exp_name}")
+        inputDlg.addField('Enter Subject id (str):',initial = self.subj_id)      # run number (int)
+        inputDlg.addField('Enter Run Number (int):',initial = self.run_number+1)      # run number (int)
+        inputDlg.addField('Wait for TTL pulse?', initial = True) # a checkbox for ttl pulse (set it true for scanning)
 
-            inputDlg.show()
+        inputDlg.show()
 
-            if inputDlg.OK:
-                self.subj_id        = str(inputDlg.data[0])
-                self.run_number     = int(inputDlg.data[1])
-                self.run_filename   = str(inputDlg.data[2])
-                self.wait_ttl       = bool(inputDlg.data[3])
-            else:
-                sys.exit()
-
+        if inputDlg.OK:
+            self.subj_id        = str(inputDlg.data[0])
+            self.run_number     = int(inputDlg.data[1])
+            # the run file always follows the run number (run 3 -> run_03.tsv); a repeated
+            # run is kept apart by its attempt number
+            self.run_filename   = self.const.default_run_filename.format(f'{self.run_number:02d}')
+            self.wait_ttl       = bool(inputDlg.data[2])
         else:
-            print("running in debug mode")
-            # pass on the values for your debugging with the following keywords
-            self.subj_id = 'test00'
-            self.run_number = self.run_number+1
-            self.run_filename = 'run_01.tsv'
-            self.wait_ttl = True
+            sys.exit()
 
     def init_run(self):
         """initializing the run:
@@ -146,14 +246,22 @@ class Experiment:
         run a run of the experiment
         """
         print(f"Running the experiment - run {self.run_number}")
+        self.write_manifest('running')
+        for task in self.task_obj_list:
+            task.attempt = self.attempt     # saved on every trial row
         self.screen.fixation_cross()
         self.ttl_clock.reset()
         self.ttl_clock.wait_for_first_ttl(wait = self.wait_ttl)
+        self.scan_num = None
+        if self.wait_ttl:
+            self.count_scan()
+        for task in self.task_obj_list:
+            task.scan_num = self.scan_num   # saved on every trial row
         run_data = []
         run_end_timestamp = None
 
         # Start the eyetracker
-        if self.const.eye_tracker:
+        if self.eye_tracker:
             self.start_eyetracker()
 
         for t_num, task in enumerate(self.task_obj_list):
@@ -167,11 +275,11 @@ class Experiment:
             r_data = self.run_info.iloc[t_num].copy()
 
             # wait till it's time to start the task
-            r_data['real_start_time'],r_data['start_ttl'],r_data['start_ttl_time'] = self.ttl_clock.wait_until(r_data.start_time)
+            r_data['real_block_start_time'],r_data['start_ttl'],r_data['start_ttl_time'] = self.ttl_clock.wait_until(r_data.start_time)
 
             ## sending a message to the edf file specifying task name
-            if self.const.eye_tracker:
-                self.pl.sendMessageToFile(f"task_name: {task.name} start_track: {self.pl.currentUsec()} real start time {r_data.real_start_time} TR count {self.ttl_clock.ttl_count}")
+            if self.eye_tracker:
+                self.pl.sendMessageToFile(f"task_name: {task.name} start_track: {self.pl.currentUsec()} real start time {r_data.real_block_start_time} TR count {self.ttl_clock.ttl_count}")
 
             # display the instruction text for the task. (instructions are task specific)
             if r_data.instruction_dur > 0:
@@ -182,10 +290,11 @@ class Experiment:
 
             # Run the task (which saves its data to the target)
             task.start_time = self.ttl_clock.get_time()
+            r_data['real_task_start_time'] = task.start_time   # after the instructions; real_block_start_time is before them
             r_data['acc'],r_data['rt'] = task.run()
 
             # Add the end time of the task
-            r_data['real_end_time'] = self.ttl_clock.get_time()
+            r_data['real_task_end_time'] = self.ttl_clock.get_time()
             if getattr(self.const, 'record_task_end_timestamp', False):
                 r_data['task_end_timestamp'] = datetime.now().isoformat()
             # Run-level stamp: a single wall-clock time taken after the last task.
@@ -196,10 +305,12 @@ class Experiment:
             run_data.append(r_data)
 
             # Optional: persist this task's data immediately so completed tasks survive a mid-run crash
-            if getattr(self.const, 'save_per_task', False):
+            if getattr(self.const, 'save_per_task', True):
                 task.save_data(self.subj_id, self.run_number)
                 one_row = pd.DataFrame([r_data])
                 one_row.insert(0, 'run_num', self.run_number)
+                one_row.insert(1, 'attempt', self.attempt)
+                one_row.insert(2, 'scan_num', self.scan_num)
                 ut.append_data_to_file(self.run_data_file, one_row)
 
             self.screen.fixation_cross()
@@ -212,20 +323,25 @@ class Experiment:
                 self.ttl_clock.wait_until(r_data.end_time)
 
         # Stop the eyetracker
-        if self.const.eye_tracker:
+        if self.eye_tracker:
             self.stop_eyetracker()
             self.tk.receiveDataFile(self.tk_filename, self.tk_filename)
 
         run_data = pd.DataFrame(run_data)
-        if not getattr(self.const, 'save_per_task', False):
+        if not getattr(self.const, 'save_per_task', True):
             # save the run data to the run file
             run_data.insert(0,'run_num',[self.run_number]*len(run_data))
+            run_data.insert(1, 'attempt', self.attempt)
+            run_data.insert(2, 'scan_num', self.scan_num)
             if getattr(self.const, 'record_run_end_timestamp', False) and run_end_timestamp is not None:
                 run_data['run_end_timestamp'] = run_end_timestamp
             ut.append_data_to_file(self.run_data_file, run_data )
 
             for task in self.task_obj_list:
                 task.save_data(self.subj_id, self.run_number)
+        self.write_manifest('finished')
+        self.write_events()
+        self.manifest = None   # Esc from here on (score board, dialog) leaves this run 'finished'
 
         # show the scoreboard (set show_scoreboard = False in constants.py to skip it)
         if getattr(self.const, 'show_scoreboard', True):
