@@ -1,24 +1,22 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "MultiTaskBattery"
 description = "A flexible Python toolbox for running multi-domain cognitive and motor tasks during fMRI sessions, built on PsychoPy."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [{name = "Diedrichsenlab"}]
 requires-python = ">=3.10,<3.13"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
-    # 2026.2.4 + MovieStim.unload fix (psychopy#7805); switch to psychopy==2026.2.5 once released
-    "psychopy @ https://github.com/psychopy/psychopy/archive/ab0a5e8.zip",
+    "psychopy==2026.2.5",
     "pandas",
     "numpy>=1.26.4",
     "scipy",
@@ -33,12 +31,12 @@ dependencies = [
     "numba",
     "nibabel",
     "psychopy-sounddevice",
-    # wxPython has no Linux wheels on PyPI, so a plain install would try to
-    # compile it from source and fail. install.py points pip at the prebuilt
-    # wheels for your distro (PIP_FIND_LINKS + PIP_ONLY_BINARY).
-    "wxPython; sys_platform == 'linux'",
+    "pygame",
 ]
 dynamic = ["version"]
+
+[project.scripts]
+mtb = "MultiTaskBattery.fetch:main"
 
 [project.urls]
 Homepage = "https://github.com/diedrichsenlab/MultiTaskBattery"

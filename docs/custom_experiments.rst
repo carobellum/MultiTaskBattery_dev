@@ -1,7 +1,7 @@
 Custom Experiments
 ========================
 
-To build a new experiment, create a new folder for it **outside** the repository (not inside ``experiments/``), so that updates to MultiTaskBattery never interfere with your work. The stimuli directory is resolved automatically from the package location, so your experiment will find the stimuli regardless of where it lives. Use ``experiments/example_minimal`` as a reference when you only need built-in tasks, and ``experiments/example_custom_task`` when you also want to define your own tasks locally.
+To build a new experiment, create a new folder for it **outside** the repository (not inside ``experiments/``), so that updates to MultiTaskBattery never interfere with your work. The stimuli are downloaded once with ``mtb fetch`` (see :doc:`installation`), so your experiment finds them regardless of where it lives. Use ``experiments/example_minimal`` as a reference when you only need built-in tasks, and ``experiments/example_custom_task`` when you also want to define your own tasks locally.
 
 Constants file
 --------------
@@ -27,10 +27,6 @@ Create a file called ``constants.py`` in the project folder. This file contains 
     run_dir    = exp_dir / "run_files"     # contains run files for each session
     data_dir   = exp_dir / "data"          # This is where the result files are being saved
 
-    # This is were the stimuli for the different task are stored
-    package_dir = Path(os.path.dirname(os.path.dirname(os.path.realpath(mtb.__file__))))
-    stim_dir   = package_dir / "stimuli"
-
     # Optional: list of local Python modules that hold custom Task / TaskFile
     # classes. Uncomment and import your module if you want to add custom
     # tasks without editing the shared MultiTaskBattery package. A
@@ -40,7 +36,7 @@ Create a file called ``constants.py`` in the project folder. This file contains 
     # import my_tasks
     # task_modules = [my_tasks]
 
-    # Use {} so the GUI auto-fills the run number (e.g. run_01.tsv, run_02.tsv, ...)
+    # {} is filled with the run number entered in the GUI (e.g. run_01.tsv, run_02.tsv, ...)
     default_run_filename = 'run_{}.tsv'
 
     # Is the Eye tracker being used?
@@ -75,6 +71,18 @@ defaults are used.
      - ``None``
      - If set to a key name (e.g. ``'space'``), only that key will dismiss
        the run-feedback scoreboard screen. If ``None``, any key continues.
+   * - ``gamepad_buttons``
+     - ``None``
+     - Game controller buttons that answer as the response keys, one per entry
+       of ``response_keys`` in the same order: ``['X', 'Y', 'A', 'B']`` makes X
+       count as the first response key, Y the second, and so on. Use button
+       names for a pad SDL knows (Xbox, PlayStation, 8BitDo) or a Current
+       Designs GMPD3 (932 in joystick mode), whose buttons take the names of
+       the same places on an Xbox pad. For the triggers (LT, RT) use
+       ``'LEFTTRIGGER'`` and ``'RIGHTTRIGGER'``; a trigger counts as pressed once
+       it is pulled halfway. For any other pad, give raw button numbers
+       (``[0, 1, 2, 3]``). The keyboard keeps working; the trigger, quit key and
+       ``continue_key`` stay on the keyboard. If ``None``, no pad is used.
    * - ``ttl_key``
      - ``'t'``
      - Key the scanner trigger (TTL) arrives as, or a list of keys that all
@@ -83,9 +91,9 @@ defaults are used.
      - ``'escape'``
      - Key that closes the window and quits the experiment at any point once
        the experiment window is open (instructions, waiting for the TTL,
-       trials, rest, scoreboard; not the run-info dialog). The run's data is
-       lost unless ``save_per_task`` is ``True``, in which case only the block
-       in progress is lost. Set to
+       trials, rest, scoreboard; not the run-info dialog). Only the block in
+       progress is lost (all of the run's data if ``save_per_task`` is
+       ``False``). The program exits with code 3. Set to
        ``None`` to disable, or pick a key that does not clash with the
        response keys or ``ttl_key``.
    * - ``show_scoreboard``
@@ -108,11 +116,16 @@ defaults are used.
        summary: the wall-clock time each block ended. Useful for aligning
        blocks with other recordings that log clock time.
    * - ``save_per_task``
+     - ``True``
+     - Each block's data is saved as soon as the block ends, so finished
+       blocks survive a crash or quit. If ``False``, all data is saved at once
+       at the end of the run (and a stopped run saves nothing). Saving takes a
+       few milliseconds between blocks, which can delay the next block's start
+       slightly.
+   * - ``write_events``
      - ``False``
-     - If ``True``, each block's data is saved as soon as the block ends,
-       instead of all at once at the end of the run, so finished blocks
-       survive a crash or quit. Saving takes a few milliseconds between
-       blocks, which can delay the next block's start slightly.
+     - If ``True``, writes a BIDS ``events.tsv`` for each scan into
+       ``<subj_id>/events/`` (see Output files).
    * - ``task_modules``
      - ``[]``
      - List of imported Python modules that hold custom Task and TaskFile
@@ -133,8 +146,8 @@ defaults are used.
    * - ``stim_dirs``
      - ``[stim_dir]``
      - List of extra stimulus root directories, searched in order after the
-       ``stimuli/`` folders next to ``task_modules``. The package's bundled
-       ``stimuli`` folder is always appended as a final fallback. Only needed
+       ``stimuli/`` folders next to ``task_modules``. The stimulus cache filled
+       by ``mtb fetch`` is always appended as a final fallback. Only needed
        for stimuli kept elsewhere (e.g. on another drive). See
        :doc:`creating_tasks`.
 
@@ -148,6 +161,39 @@ defaults are used.
    **experiment-wide** display settings that live in ``constants.py`` are
    ``instruction_text_height``, ``instruction_wrap_width`` and
    ``scoreboard_text_height``.
+
+
+Output files
+------------
+Each subject's data goes to ``<data_dir>/<subj_id>/``:
+
+* ``<subj_id>.tsv``: one row per block (planned and real start and end times, the trigger
+  count, accuracy and reaction time), all runs appended. ``real_block_start_time`` is when the block
+  began (its instruction screen), ``real_task_start_time`` when the task began after the
+  instructions, and ``real_task_end_time`` when the task ended; all in seconds from the first trigger.
+* ``<subj_id>_task-<code>.tsv``: one row per trial of that task (stimulus, response, correct,
+  reaction time), all runs appended.
+* ``<subj_id>_run-<NN>_attempt-<k>_manifest.json``: one per run, written when the run starts.
+  It records what the run ran under: the MultiTaskBattery, PsychoPy and Python versions, the
+  run file, the simple settings of ``constants.py``, the window size and refresh rate. Its
+  ``status`` is ``running`` until the run ends, then ``finished``, or ``stopped`` if the quit
+  key was pressed; a run that crashed stays ``running``.
+* ``events/sub-<subj>_task-<exp_name>_run-<NN>_events.tsv``: one per scan, ready to copy into a
+  BIDS folder; ``<NN>`` is the ``scan_num``. One row per instruction period (``trial_type``
+  ``instruction``) and per task period (``trial_type`` is the task name, plus the condition when
+  all of the block's trials share one), with ``onset`` and ``duration`` in seconds from the first
+  trigger. Written at the end of the run, or at a quit with the blocks finished so far. Only for
+  runs that waited for the trigger, and only with ``write_events = True``.
+
+Every row of the ``.tsv`` files, and the manifest, has three numbers:
+
+* ``run_num``: which run file played (run 3 plays ``run_03.tsv``).
+* ``attempt``: 1 for the first try at a run, 2 if the run was started again (for example after
+  a quit), and so on. Earlier tries are kept, so filter on the attempt whose manifest says
+  ``finished``.
+* ``scan_num``: the how-many-th run of this subject that received a scanner trigger, so it
+  matches the scanner's own count of scans: run 3 repeated after run 8 is scan 9. Runs stopped
+  before the first trigger do not count, and it is empty when the run did not wait for a trigger.
 
 
 Generating run and task files

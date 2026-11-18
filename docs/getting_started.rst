@@ -6,15 +6,11 @@ Repository Structure
 The repository is organized into the following main folders:
 
 - **MultiTaskBattery**: Contains the core Python modules and classes needed to run tasks.
-- **stimuli**: Stores the stimuli used in experiments, organized into subfolders for each task (e.g., `n_back` for n-back tasks).
 - **experiments**: Stores example experiments that you can use as a starting point. Your own experiment should live in its own folder **outside** the repository (not inside ``experiments/``), so that updates to MultiTaskBattery never interfere with your work.
 
 ::
 
     |-MultiTaskBattery: Main Python modules and classes
-    |-stimuli: Stimuli used in the experiments
-    |  |-n_back: Stimuli for n_back tasks
-    |     |- ...
     |-experiments: Example experiments to use as a starting point
     |  |- example_minimal: Minimal experiment using only built-in tasks
     |  |   |-run.py: Main Python program
@@ -122,19 +118,16 @@ The `constants.py` file in the `experiments/example_minimal/` folder contains al
   - `task_dir`: Directory containing task files (`task_xx.tsv`).
   - `run_dir`: Directory containing run files (`run_xx.tsv`).
   - `data_dir`: Directory where data files are saved.
-  - `stim_dir`: Directory storing stimuli for tasks.
+  - `stim_dir` (optional): An extra directory with stimuli for tasks. Built-in tasks find their stimuli in the cache filled by `mtb fetch`.
 
 - **Default Run File**:
-  The `default_run_filename` is the run-file name template (`run_{}.tsv`); the `{}` is auto-filled with the run number in the GUI (e.g. `run_01.tsv`, `run_02.tsv`, ...).
+  The `default_run_filename` is the run-file name template (`run_{}.tsv`); the `{}` is filled with the run number entered in the GUI (e.g. `run_01.tsv`, `run_02.tsv`, ...).
 
 - **Eye-Tracking**:
-  The `eye_tracker` flag enables or disables eye tracking integration.
-
-- **Debug Mode**:
-  Set `debug` to `True` to enable debugging features.
+  The `eye_tracker` flag enables or disables eye tracking integration (optional; defaults to False).
 
 - **Screen Settings**:
-  The `screen` dictionary allows customization of the screen resolution (`screen['size']`), full-screen mode (`screen['fullscr']`), and display selection (`screen['number']`). `screen['width']` (physical width of the screen image in cm) and `screen['distance']` (eye-to-screen distance in cm) are required: stimuli are drawn in degrees of visual angle, so measure both for each setup. The experiment will not start without them.
+  The `screen` dictionary allows customization of the screen resolution (`screen['size']`), full-screen mode (`screen['fullscr']`), and display selection (`screen['number']`). `screen['width']` (physical width of the screen image in cm) and `screen['distance']` (eye-to-screen distance in cm) are required: stimuli are drawn in degrees of visual angle, so measure both for each setup. The experiment will not start without them. Optionally, `screen['center_shift']` (degrees, `[x, y]`, default `[0, 0]`) shifts the whole display, for a projected image that sits off the participant's line of sight.
 
 
 run.py
@@ -145,7 +138,7 @@ The `run.py` script in the `example_minimal/` folder serves as the main program 
   The `Experiment` object is created using configurations defined in `constants.py`.
 
 - **Run Confirmation**:
-  A GUI prompts the user to confirm the run details. The GUI looks like this:
+  A GUI prompts the user to confirm the subject id, the run number and whether to wait for the scanner trigger. The run file follows from the run number (run 3 plays `run_03.tsv`); running a run number again saves it as its next `attempt`. The GUI looks like this (older versions also had a run-file field):
 
 .. image:: images/Run_GUI.png
     :width: 600

@@ -8,7 +8,7 @@ import MultiTaskBattery.utils as ut
 import MultiTaskBattery.experiment_block as exp_block
 
 # shortest block (s) each task can fill; tasks not listed run 6 s
-DUR = {'finger_rhythmic': 70, 'time_perception': 10, 'demand_grid': 10,
+DUR = {'finger_rhythmic': 70, 'time_perception': 10, 'demand_grid': 18,
        'action_observation': 15, 'passage_listening': 15, 'semantic_prediction': 15,
        'theory_of_mind': 15,
        'movie': 30, 'auditory_narrative': 30, 'spatial_navigation': 30}
@@ -20,7 +20,7 @@ def const(tmp_path_factory):
     return types.SimpleNamespace(
         exp_name='smoke', exp_dir=d, task_dir=d / 'task_files', run_dir=d / 'run_files',
         data_dir=d / 'data', stim_dir=ut._PACKAGE_STIM_DIR, default_run_filename='run_01.tsv',
-        response_keys=['a', 's', 'd', 'f'], eye_tracker=False, debug=True, show_scoreboard=False,
+        response_keys=['a', 's', 'd', 'f'], eye_tracker=False, show_scoreboard=False, write_events=True,
         screen={'size': [800, 600], 'fullscr': False, 'number': 0, 'width': 53, 'distance': 57})
 
 
@@ -38,21 +38,39 @@ def test_task(name, const, screen):
     # task file
     task_file = ut.get_task_file_class(const, tf.get_task_class(name))(const)
     args = {'task_dur': dur, 'file_name': f'{name}.tsv'}
-    if 'run_number' in inspect.signature(task_file.make_task_file).parameters:
+    params = inspect.signature(task_file.make_task_file).parameters
+    if 'run_number' in params:
         args['run_number'] = 1
+    if 'iti_dur' in params:
+        args['iti_dur'] = 0   # no gap between trials, so a trial that runs long delays the next one
     task_file.make_task_file(**args)
 
     # one-block run
     tf.make_run_file([name], [f'{name}.tsv'], instruction_dur=1, task_dur=dur,
                      shuffle=False).to_csv(const.run_dir / 'run_01.tsv', sep='\t', index=False)
     e = exp_block.Experiment(const, subj_id=name, screen=screen)
-    e.confirm_run_info()
-    e.subj_id, e.wait_ttl = name, False
+    e.run_number, e.run_filename, e.wait_ttl = 1, 'run_01.tsv', False   # what the run dialog sets
     e.init_run()
     e.run()
 
     # data saved, block starts on time and does not run past its end
     block = pd.read_csv(const.data_dir / name / f'{name}.tsv', sep='\t').iloc[-1]
     assert list((const.data_dir / name).glob(f'{name}_task-*.tsv')), 'no trial data saved'
-    assert abs(block.real_start_time - block.start_time) < 0.1
-    assert block.real_end_time < block.end_time + 0.5, 'block ran past its end'
+    assert abs(block.real_block_start_time - block.start_time) < 0.1
+    assert block.real_task_end_time < block.end_time + 0.5, 'block ran past its end'
+    assert abs(block.real_task_start_time - (block.start_time + block.instruction_dur)) < 0.1, 'task did not start after its instructions'
+
+    # events file: written as if the run had waited for the trigger (scan 1)
+    e.scan_num = 1
+    e.write_events()
+    events = pd.read_csv(next((const.data_dir / name / 'events').glob('*_run-01_events.tsv')), sep='\t')
+    assert list(events.trial_type) == ['instruction', events.trial_type.iloc[1]] and events.trial_type.iloc[1].startswith(name)
+    assert abs(events.onset.iloc[1] - block.real_task_start_time) < 0.001
+
+    # trials keep to their schedule: each trial starts as late as the first one, give or take
+    # 30 ms, so delays do not add up over the block
+    trials = pd.concat(pd.read_csv(f, sep='\t') for f in (const.data_dir / name).glob(f'{name}_task-*.tsv'))
+    if len(trials) > 1 and 'real_start_time' in trials:
+        lag = trials.real_start_time - trials.start_time
+        drift = lag.max() - lag.min()
+        assert drift < 0.03, f'trial starts drift by {drift:.3f} s over the block'

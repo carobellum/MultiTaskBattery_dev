@@ -2,7 +2,6 @@
 # it is passed to the Experiment class on initialization
 from pathlib import Path
 import os
-import MultiTaskBattery as mtb
 
 #Necessary definitions for the experiment:
 exp_name = 'example_minimal' # name of the experiment
@@ -12,6 +11,9 @@ exp_name = 'example_minimal' # name of the experiment
 
 #COMMENT THIS FOR SCANNING
 response_keys    = ['a', 's', 'd', 'f']
+
+# game controller: buttons that answer as response_keys 1-4 (names for an Xbox-type pad or a Current Designs GMPD3, raw numbers for other pads)
+#gamepad_buttons  = ['X', 'Y', 'A', 'B']
 
 #not used
 response_fingers = ['Pinky', 'Ring','Middle', 'Index']
@@ -25,15 +27,12 @@ data_dir   = exp_dir / "data"          # This is where the result files are bein
 # Use {} so the GUI auto-fills the run number (e.g. run_01.tsv, run_02.tsv, ...)
 default_run_filename = 'run_{}.tsv'
 
-# This is were the stimuli for the different task are stored
-package_dir = Path(os.path.dirname(os.path.dirname(os.path.realpath(mtb.__file__))))
-stim_dir   = package_dir / "stimuli"
-
 # Is the Eye tracker being used?
 eye_tracker = False                                     # do you want to do  eyetracking?
 
-# Running in debug mode?
-debug = False                                           # set to True for debugging
+
+# write a BIDS events.tsv for each scan into data/<subj>/events/
+write_events = True
 
 # Screen settings for subject display
 screen = {}

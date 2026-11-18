@@ -8,7 +8,6 @@
 
 from pathlib import Path
 import os
-import MultiTaskBattery as mtb
 import my_tasks  # local module: both Task and TaskFile classes for custom tasks
 
 #Necessary definitions for the experiment:
@@ -19,6 +18,9 @@ exp_name = 'example_custom_task'
 
 #COMMENT THIS FOR SCANNING
 response_keys    = ['a', 's', 'd', 'f']
+
+# game controller: buttons that answer as response_keys 1-4 (names for an Xbox-type pad or a Current Designs GMPD3, raw numbers for other pads)
+#gamepad_buttons  = ['X', 'Y', 'A', 'B']
 
 response_fingers = ['Pinky', 'Ring','Middle', 'Index']
 
@@ -36,11 +38,10 @@ task_modules = [my_tasks]
 
 default_run_filename = 'run_{}.tsv'
 
-package_dir = Path(os.path.dirname(os.path.dirname(os.path.realpath(mtb.__file__))))
-stim_dir   = package_dir / "stimuli"
-
 eye_tracker = False
-debug = False
+
+# write a BIDS events.tsv for each scan into data/<subj>/events/
+write_events = True
 
 screen = {}
 screen['size'] = [1100, 800]

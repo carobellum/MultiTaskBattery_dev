@@ -160,7 +160,7 @@ class TaskFile():
         self.const              = const
         self.exp_name           = const.exp_name
         self.task_dir           = const.task_dir
-        self.stim_dir           = const.stim_dir
+        self.stim_dir           = getattr(const, 'stim_dir', None)
         self.matching_stimuli   = True # whether the stimuli are matching between the control and active condition or not
         self.half_assigned      = False # whether the stimuli have assigne halves or not (for assigning different stimuli to different participants)
 
@@ -426,7 +426,8 @@ class MotorLocalizer(TaskFile):
                         condition=['hand', 'foot', 'tongue'],
                         file_name=None,
                         text_height=1.5,
-                        label_y=6):
+                        label_y=6,
+                        show_label=True):
         """
         Create a motor-localizer task file. The block is split into one equal
         segment per condition (segment_dur = task_dur / len(condition), e.g.
@@ -449,6 +450,8 @@ class MotorLocalizer(TaskFile):
             file_name (str): Name of the file to save the task data.
             text_height (float): Height of the task text in degrees of visual angle.
             label_y (float): Height of the condition label above the centre, in degrees of visual angle.
+            show_label (bool): Show the condition label during the block. Turn it off only when
+                the block has one condition that the instructions already name.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -467,6 +470,7 @@ class MotorLocalizer(TaskFile):
                 trial['trial_num'] = n
                 trial['text_height'] = text_height
                 trial['label_y'] = label_y
+                trial['show_label'] = show_label
                 trial['condition'] = cond
                 trial['trial_type'] = 1 - (p % 2)        # 1 = circle present, 0 = circle absent
                 trial['trial_dur'] = trial_dur
@@ -1578,9 +1582,12 @@ class Affective(TaskFile):
                        file_name=None,
                        hand='right',
                        responses=[1,2],
-                       stim_width=18.4):
+                       stim_width=18.4,
+                       run_number=1):
         """
         Create an affective-picture task file (judge pleasant vs unpleasant).
+        Each run takes the next unused images of each valence, wrapping around
+        once all have been shown (64 per valence: 8 runs of 30 s without repeats).
 
         Args:
             task_dur (float): Total task duration in seconds.
@@ -1590,6 +1597,7 @@ class Affective(TaskFile):
             stim_width (float): Width of the pictures / clips in degrees of visual angle (height keeps the aspect ratio).
             hand (str): Hand used for response ('right' or 'left').
             responses (list): Response keys for [unpleasant, pleasant].
+            run_number (int): Run number, used to select which images to show.
 
         Returns:
             pd.DataFrame: Task information as a DataFrame.
@@ -1599,9 +1607,13 @@ class Affective(TaskFile):
         n_pleasant = n_trials // 2
         n_unpleasant = n_trials - n_pleasant
 
-        # Randomly sample numbers 1–26 (image name numbers)
-        pleasant_nums = random.sample(range(1, 27), n_pleasant)
-        unpleasant_nums = random.sample(range(1, 27), n_unpleasant)
+        # Next unused image numbers of each valence for this run (images are numbered from 1)
+        stim_dir = ut.find_stim_dir(self.const, self.name)
+        def pick(valence, n):
+            total = len(list(stim_dir.glob(f'{valence}*.jpg')))
+            return [((run_number - 1) * n + i) % total + 1 for i in range(n)]
+        pleasant_nums = pick('pleasant', n_pleasant)
+        unpleasant_nums = pick('unpleasant', n_unpleasant)
 
         # Create stim list
         stim = [{'imgName': f'pleasant{n}.jpg', 'trialType': 2} for n in pleasant_nums] + \
@@ -1823,71 +1835,3 @@ class TimePerception(TaskFile):
             ut.dircheck(self.task_dir / self.name)
             df.to_csv(self.task_dir / self.name / file_name, sep='\t', index=False)
         return df
-
-class SensMotControl(TaskFile):
-    def __init__(self, const):
-        super().__init__(const)
-        self.name = 'sensmot_control'
-
-    def make_task_file(self,
-                       hand='right',
-                       responses=[1, 2],
-                       run_number=None,
-                       task_dur=300,
-                       trial_dur=3,
-                       question_dur=2,
-                       iti_dur= 1,
-                       file_name=None,
-                       stim_file = None,
-                       condition=None):
-
-        # count number of trials
-        n_trials = int(np.floor(task_dur / (trial_dur + iti_dur)))
-        trial_info = []
-        t = 0
-
-        if stim_file:
-            stim = pd.read_csv(ut.find_stim(self.const, self.name, stim_file), sep='\t')
-        else:
-            stim = pd.read_csv(ut.find_stim(self.const, self.name, f'{self.name}_block1.csv'), sep='\t')
-
-        if condition:
-            stim = stim[stim['condition'] == condition]
-        else:
-            stim = stim.loc[
-                ~stim['condition'].str.contains('practice', na=False)
-                & (stim['condition'].astype(str).str.lower() != 'exclude')
-            ]
-
-        start_row = (run_number - 1) * n_trials
-        end_row = run_number * n_trials - 1
-        stim = stim.iloc[start_row:end_row + 1].reset_index(drop=True)
-
-        for n in range(n_trials):
-            trial = {}
-            trial['key_one'] = responses[0]
-            trial['key_two'] = responses[1]
-            trial['trial_num'] = n
-            trial['hand'] = hand
-            trial['trial_dur'] = trial_dur
-            trial['question_dur'] = question_dur
-            trial['iti_dur'] = iti_dur
-            trial['trial_type'] = stim['corr_resp'][n]
-            trial['stim'] = stim['color'][n]
-            trial['condition'] = stim['condition'][n]
-            trial['display_trial_feedback'] = True
-            trial['start_time'] = t
-            trial['end_time'] = t + trial_dur + iti_dur
-            trial_info.append(trial)
-
-            # Update for next trial:
-            t = trial['end_time']
-
-        trial_info = pd.DataFrame(trial_info)
-        if file_name is not None:
-            trial_info.to_csv(self.task_dir / self.name / file_name, sep='\t', index=False)
-        return trial_info
-
-
-
-

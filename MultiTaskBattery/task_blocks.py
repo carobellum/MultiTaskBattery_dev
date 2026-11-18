@@ -13,6 +13,7 @@ from psychopy import visual, sound, core, event
 from psychopy.tools.monitorunittools import deg2pix
 from pyglet.window import key
 import MultiTaskBattery.utils as ut
+import MultiTaskBattery.gamepad as gamepad
 from ast import literal_eval
 from copy import deepcopy
 from moviepy.audio.io.AudioFileClip import AudioFileClip
@@ -94,6 +95,9 @@ class Task:
             t_data = self.run_trial(t_data)
             # Append the trial data
             self.trial_data.append(t_data)
+        # Hold the last trial's feedback until its end, as the next trial's start holds the others
+        if 'end_time' in self.trial_info:
+            self.ttl_clock.wait_until(self.start_time + self.trial_info['end_time'].iloc[-1])
         self.trial_data = pd.DataFrame(self.trial_data)
         # Calculate the feedback for the run
         acc = None
@@ -179,7 +183,7 @@ class Task:
                                 show_last_seconds=show_last_seconds,
                                 y_pos=6)
                 self.window.flip()
-            keys=event.getKeys(keyList= self.const.response_keys, timeStamped=self.ttl_clock.clock)
+            keys=gamepad.get_keys(keyList= self.const.response_keys, timeStamped=self.ttl_clock.clock)
             if len(keys)>0:
                 response_made = True
                 key_char = keys[0][0]
@@ -210,9 +214,13 @@ class Task:
 
         Args:
             subj_id (str): Subject id to determine name
-            run_num (int): Number of run - inserted as first column
+            run_num (int): Number of run - inserted as first column, with the attempt
+                at that run (self.attempt, set by the Experiment) as the second and the
+                scanner's count of scans (self.scan_num) as the third
         """
         self.trial_data.insert(0, 'run_num', [run_num]*len(self.trial_data))
+        self.trial_data.insert(1, 'attempt', getattr(self, 'attempt', 1))
+        self.trial_data.insert(2, 'scan_num', getattr(self, 'scan_num', None))
         trial_data_file = self.const.data_dir / subj_id / f"{subj_id}_task-{self.code}.tsv"
         ut.append_data_to_file(trial_data_file, self.trial_data)
 
@@ -306,8 +314,10 @@ class NBack(Task):
         self.stim[trial['trial_num']].draw()
         self.window.flip()
 
-        # collect responses 0: no response 1-4: key pressed
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['trial_dur'])
+        # collect responses 0: no response 1-4: key pressed (until the trial's planned end; RT from the display onset)
+        onset = self.ttl_clock.get_time()
+        trial_end = self.start_time + trial['start_time'] + trial['trial_dur']
+        trial['response'],trial['rt'] = self.wait_response(onset, trial_end - onset)
         trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
 
         # display trial feedback
@@ -379,8 +389,8 @@ class VerbGeneration(Task):
 
         self.show_stim(trial['noun'], trial['condition'], trial.get('text_height', 2))
 
-        # wait for trial duration
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        # wait until the trial's planned end (timed from its planned start, so delays do not add up)
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + trial['trial_dur'])
 
         # ITI: blank the word but keep the cue on, so the context never disappears
         self.cue(trial['condition']).draw()
@@ -415,8 +425,8 @@ class TongueMovement(Task):
 
         self.window.flip()
 
-        # wait for trial duration
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        # wait until the trial's planned end (timed from its planned start, so delays do not add up)
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + trial['trial_dur'])
 
         # return to a plain fixation cross (no response, so no feedback)
         self.screen.fixation_cross()
@@ -455,10 +465,12 @@ class MotorLocalizer(Task):
 
     def run_trial(self, trial):
         """ Run a single row of the motor-localizer task. """
-        # Condition label (body part) at the top of the screen, in black
-        cond_visual = visual.TextStim(self.window, text=str(trial['condition']), pos=(0.0, trial.get('label_y', 6.0)),
-                                      color=(-1, -1, -1), units='deg', height=trial.get('text_height', 1.5))
-        cond_visual.draw()
+        # Condition label (body part) at the top of the screen, in black (unless show_label is
+        # False; older task files have no show_label column and show it)
+        if trial.get('show_label', True):
+            cond_visual = visual.TextStim(self.window, text=str(trial['condition']), pos=(0.0, trial.get('label_y', 6.0)),
+                                          color=(-1, -1, -1), units='deg', height=trial.get('text_height', 1.5))
+            cond_visual.draw()
 
         # Central fixation cross (drawn without flipping yet)
         self.screen.fixation_cross(flip=False)
@@ -471,8 +483,9 @@ class MotorLocalizer(Task):
 
         self.window.flip()
 
-        # hold this row for its duration (no response, so no feedback)
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        # hold this row until its scheduled end (no response, so no feedback); timing from the
+        # block start, so the flip's wait for the screen refresh does not add up over rows
+        self.ttl_clock.wait_until(self.start_time + trial['end_time'])
         return trial
 
 class AuditoryNarrative(Task):
@@ -496,8 +509,8 @@ class AuditoryNarrative(Task):
 
         trial_dur = audio_stim.getDuration()
 
-        # wait for trial duration (fixation cross stays on screen during playback)
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        # wait until the trial's planned end (fixation cross stays on screen during playback)
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + trial['trial_dur'])
 
         return trial
 
@@ -525,8 +538,8 @@ class SpatialNavigation(Task):
         # fixation cross stays on screen while the participant imagines the route (no response)
         self.screen.fixation_cross()
 
-        # wait for trial duration
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        # wait until the trial's planned end
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + trial['trial_dur'])
 
         return trial
 
@@ -572,8 +585,9 @@ class TheoryOfMind(Task):
         story_stim.draw()
         self.window.flip()
 
-        # wait until story duration
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['story_dur'])
+        # story until its planned end (timed from the trial's planned start, so delays do not add up)
+        story_end = self.start_time + trial['start_time'] + trial['story_dur']
+        self.ttl_clock.wait_until(story_end)
 
         # Flush any keys in buffer
         event.clearEvents()
@@ -583,8 +597,9 @@ class TheoryOfMind(Task):
         question_stim.draw()
         self.window.flip()
 
-        # collect responses 0: no response 1-4: key pressed
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['question_dur'])
+        # collect responses 0: no response 1-4: key pressed (until the question's planned end; RT from its onset)
+        onset = self.ttl_clock.get_time()
+        trial['response'],trial['rt'] = self.wait_response(onset, story_end + trial['question_dur'] - onset)
         trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
 
         # display trial feedback
@@ -612,8 +627,8 @@ class PassageListening(Task):
         audio_stim = sound.Sound(str(audio_path))
         audio_stim.play()
 
-        # wait for trial duration (fixation cross stays on screen during playback)
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        # wait until the trial's planned end (fixation cross stays on screen during playback)
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + trial['trial_dur'])
 
         return trial
 
@@ -734,6 +749,7 @@ class DemandGrid(Task):
             num_steps = 3
 
         step_dur = trial['sequence_dur']/num_steps
+        t0 = self.start_time + trial['start_time']   # planned trial start: steps and answer window end on schedule
         self.square_size = trial.get('square_size', 1.5)
         self.answer_offset = trial.get('answer_offset', 5)
         self.grid = self.create_grid(grid_size=grid_size)
@@ -757,7 +773,7 @@ class DemandGrid(Task):
                     for rect in row:
                         rect.draw()
                 self.window.flip()
-                self.ttl_clock.wait_until(self.ttl_clock.get_time() + step_dur)
+                self.ttl_clock.wait_until(t0 + (i + 1) * step_dur)
 
                 for tuple in step_sequence:
                     x, y = tuple
@@ -779,7 +795,7 @@ class DemandGrid(Task):
                     for rect in row:
                         rect.draw()
                 self.window.flip()
-                self.ttl_clock.wait_until(self.ttl_clock.get_time() + step_dur)
+                self.ttl_clock.wait_until(t0 + (i // 2 + 1) * step_dur)
 
                 # Reset colors after the pair
                 for x, y in pair:
@@ -799,12 +815,17 @@ class DemandGrid(Task):
         modified_grid = self.create_grid(sequence=modified_sequence, position='left' if correct_side == 'right' else 'right', grid_size=grid_size)
         self.window.flip()
 
-        # collect responses 0: no response 1-4: key pressed
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['question_dur'])
+        # collect responses 0: no response 1-4: key pressed (until the planned end of the answer window; RT from its onset)
+        onset = self.ttl_clock.get_time()
+        question_end = t0 + trial['sequence_dur'] + trial['question_dur']
+        trial['response'],trial['rt'] = self.wait_response(onset, question_end - onset)
         trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
 
         # Provide feedback if necessary
-        self.display_trial_feedback(trial['display_trial_feedback'], trial['correct'])
+        # feedback only if a key was pressed; on a miss the screen is left as it is until the next
+        # trial draws over it, so nothing flashes at the trial's end
+        if trial['response'] != 0:
+            self.display_trial_feedback(trial['display_trial_feedback'], trial['correct'])
 
         return trial
 
@@ -825,12 +846,13 @@ class Reading(Task):
         sentence = trial['stim']
         words = sentence.split()
 
-        #show words seqeuntially each for 450ms
-        for word in words:
+        #show words seqeuntially each for 450ms (each ends at its planned time, so delays do not add up)
+        t0 = self.start_time + trial['start_time']
+        for k, word in enumerate(words):
             word_stim = visual.TextStim(self.window, text=word, pos=(0.0, 0.0), color=(-1, -1, -1), units='deg', height=trial.get('text_height', 2))
             word_stim.draw()
             self.window.flip()
-            self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.45)
+            self.ttl_clock.wait_until(t0 + (k + 1) * 0.45)
 
         event.clearEvents()
 
@@ -838,7 +860,8 @@ class Reading(Task):
         button_stim = visual.ImageStim(self.window, image=str(ut.find_stim(self.const, self.name, 'hand_press_transparent.png')), size=(trial.get('stim_width', 14.4), None))
         button_stim.draw()
         self.window.flip()
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), 0.4)
+        onset = self.ttl_clock.get_time()
+        trial['response'],trial['rt'] = self.wait_response(onset, t0 + len(words) * 0.45 + 0.4 - onset)
 
         # show blank_transparent image
         blank_stim = visual.ImageStim(self.window, image=str(ut.find_stim(self.const, self.name, 'blank_transparent.png')), size=(trial.get('stim_width', 14.4), None))
@@ -892,7 +915,8 @@ class OddBall(Task):
 
         word_stim.draw()
         self.window.flip()
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        letter_end = self.start_time + trial['start_time'] + trial['trial_dur']   # planned, so delays do not add up
+        self.ttl_clock.wait_until(letter_end)
 
         # blank the letter to a fixation cross during the response window (no per-trial feedback)
         self.screen.fixation_cross()
@@ -901,7 +925,8 @@ class OddBall(Task):
         event.clearEvents()
 
         # collect responses 0: no response 1-4: key pressed
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['iti_dur'])
+        now = self.ttl_clock.get_time()
+        trial['response'],trial['rt'] = self.wait_response(now, letter_end + trial['iti_dur'] - now)
 
         # method 2 for accuracy for oddball
         if trial['trial_type'] == 1:
@@ -968,7 +993,7 @@ class FingerSequence(Task):
         while self.ttl_clock.get_time() - sequence_start_time < trial['trial_dur'] and num_presses < num_items:
             self.ttl_clock.update()
 
-            keys = event.getKeys(keyList=self.const.response_keys, timeStamped=self.ttl_clock.clock)
+            keys = gamepad.get_keys(keyList=self.const.response_keys, timeStamped=self.ttl_clock.clock)
             if keys:
                 key_char, key_press_time = keys[0]
                 key = self.const.response_keys.index(key_char) + 1
@@ -1033,7 +1058,7 @@ class FlexionExtension(Task):
                                color=(-1, -1, -1), units='deg', height=trial.get('text_height', 1.5))
         stim.draw()
         self.window.flip()
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + trial['trial_dur'])
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + trial['trial_dur'])
         return trial
 
 class SemanticPrediction(Task):
@@ -1076,18 +1101,20 @@ class SemanticPrediction(Task):
         sentence = trial['sentence']
         words = sentence.split('|')
 
-        #show words seqeuntially each for 800ms
-        for word in words:
+        #show words seqeuntially each for 800ms (each ends at its planned time, so delays do not add up)
+        t0 = self.start_time + trial['start_time']
+        for k, word in enumerate(words):
             word_stim = visual.TextStim(self.window, text=word, pos=(0.0, 0.0), color=(-1, -1, -1), units='deg', height=height_word)
             word_stim.draw()
             self.window.flip()
-            self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.8)
+            self.ttl_clock.wait_until(t0 + (k + 1) * 0.8)
 
         event.clearEvents()
 
         # Fixation cross
         self.screen.fixation_cross()
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + 0.5)
+        last_word_onset = t0 + len(words) * 0.8 + 0.5
+        self.ttl_clock.wait_until(last_word_onset)
         event.clearEvents()
 
         # Display last word
@@ -1097,8 +1124,9 @@ class SemanticPrediction(Task):
 
         event.clearEvents()
 
-        # collect responses 0: no response 1-4: key pressed
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['sentence_dur'])
+        # collect responses 0: no response 1-4: key pressed (until the planned end; RT from the last word's onset)
+        onset = self.ttl_clock.get_time()
+        trial['response'],trial['rt'] = self.wait_response(onset, last_word_onset + trial['sentence_dur'] - onset)
         trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
 
         # display trial feedback
@@ -1217,8 +1245,10 @@ class VisualSearch(Task):
 
         self.window.flip()
 
-        # collect responses
-        trial['response'],trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['trial_dur'])
+        # collect responses until the trial's planned end (RT from the display onset)
+        onset = self.ttl_clock.get_time()
+        trial_end = self.start_time + trial['start_time'] + trial['trial_dur']
+        trial['response'],trial['rt'] = self.wait_response(onset, trial_end - onset)
         trial['correct'] = (trial['response'] == self.corr_key[trial['trial_type']])
 
         self.display_trial_feedback(trial['display_trial_feedback'], trial['correct'])
@@ -1318,8 +1348,10 @@ class Affective(Task):
         self.stim[trial['trial_num']].draw()
         self.window.flip()
 
-        # Wait for response
-        trial['response'], trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['trial_dur'])
+        # Wait for response until the trial's planned end (from the block start, so the flip's
+        # wait for the screen refresh does not add up over trials); RT from the image onset
+        onset = self.ttl_clock.get_time()
+        trial['response'], trial['rt'] = self.wait_response(onset, self.start_time + trial['start_time'] + trial['trial_dur'] - onset)
 
         # Determine correct response
         correct_key = trial['key_pleasant'] if trial['trial_type'] == 2 else trial['key_unpleasant']
@@ -1374,8 +1406,8 @@ class SerialReactionTime(Task):
         trial_stim = int(trial['stim'])
         target_index = trial_stim - 1
 
-        # wait until absolute stimulus time
-        stim_onset = self.ttl_clock.get_time()
+        # the trial's planned start, so delays do not add up over the block
+        stim_onset = self.start_time + trial['start_time']
 
         # show stimulus
         for j, box in enumerate(self.boxes):
@@ -1395,7 +1427,7 @@ class SerialReactionTime(Task):
         # collect responses until absolute end_time
         responses = []
         while self.ttl_clock.get_time() < (stim_onset + trial['trial_dur'] + trial['iti_dur']):
-            keys = event.getKeys(
+            keys = gamepad.get_keys(
                 keyList=self.const.response_keys,
                 timeStamped=self.ttl_clock.clock
             )
@@ -1433,7 +1465,7 @@ class FingerRhythmic(Task):
         txt = (f"New trial starts now") # this text shows when a new trials starts
         visual.TextStim(self.window, text=txt,height=self.const.instruction_text_height, color=[-1, -1, -1], wrapWidth=self.const.instruction_wrap_width).draw()
         self.window.flip()
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + 2)
+        self.ttl_clock.wait_until(self.start_time + trial['start_time'] + 2)
 
         self.screen.fixation_cross()
         event.clearEvents()
@@ -1464,7 +1496,7 @@ class FingerRhythmic(Task):
                     beep_time = clk.getTime()
                     beep_times.append(beep_time)
                     break
-                res = event.waitKeys(maxWait=deadline - now,
+                res = gamepad.wait_keys(maxWait=deadline - now,
                                      keyList=self.const.response_keys,
                                      timeStamped=clk)
                 if res:
@@ -1477,7 +1509,7 @@ class FingerRhythmic(Task):
             now = clk.getTime()
             if now >= end_abs:
                 break
-            res = event.waitKeys(maxWait=end_abs - now,
+            res = gamepad.wait_keys(maxWait=end_abs - now,
                                  keyList=self.const.response_keys,
                                  timeStamped=clk)
             if res:
@@ -1700,70 +1732,4 @@ class TimePerception(Task):
 
         self.stair[side] = st
         self.display_trial_feedback(trial['display_trial_feedback'], trial['correct'])
-        return trial
-
-class SensMotControl(Task):
-    def __init__(self, info, screen, ttl_clock, const, subj_id):
-        super().__init__(info, screen, ttl_clock, const, subj_id)
-        self.feedback_type = 'acc+rt'
-
-    def init_task(self):
-        trial_info_file = self.const.task_dir / self.name / self.task_file
-        self.trial_info = pd.read_csv(trial_info_file, sep='\t')
-        self.corr_key = [self.trial_info['key_one'].iloc[0], self.trial_info['key_two'].iloc[0]]
-
-    def display_instructions(self):
-        """
-        displays the instruction for the task
-        """
-        cond = str(self.trial_info['condition'].iloc[0])
-        if cond == 'blue':
-            str1 = f"When the circle turns BLUE, press {self.corr_key[0]}."
-            str2 = f"When the circle turns WHITE, do nothing."
-            self.instruction_text = f"{self.descriptive_name} Task\n\n {str1} \n {str2}"
-        elif cond == 'red':
-            str1 = f"When the circle turns RED, press {self.corr_key[1]}."
-            str2 = f"When the circle turns WHITE, do nothing."
-            self.instruction_text = f"{self.descriptive_name} Task\n\n {str1} \n {str2}"
-        else:
-            str1 = f"When the circle turns BLUE, press {self.corr_key[0]}."
-            str2 = f"When the circle turns RED, press {self.corr_key[1]}."
-            str3 = f"When the circle turns WHITE, do nothing."
-            self.instruction_text = f"{self.descriptive_name} Task\n\n {str1} \n {str2} \n {str3}"
-
-        instr_visual = visual.TextStim(self.window, text=self.instruction_text,
-                                       height=self.const.instruction_text_height, color=[-1, -1, -1], wrapWidth=25, pos=(0, 0))
-        instr_visual.draw()
-        self.window.flip()
-
-    def run_trial(self, trial):
-
-        event.clearEvents()
-
-        # --- 1) Fixation circle (1000 ms) ---
-        visual.Circle(self.window, size=6, edges=128, lineWidth=4, lineColor='black', fillColor=None).draw()
-        self.window.flip()
-        self.ttl_clock.wait_until(self.ttl_clock.get_time() + 1)
-        self.ttl_clock.update()
-
-        # --- 2) Colored circle (2000 ms) ---
-        visual.Circle(self.window, size=6, edges=128,lineWidth=6, fillColor= trial['stim'], lineColor=trial['stim']).draw()
-        self.window.flip()
-
-        # collect responses 0: no response 1-4: key pressed
-        trial['response'], trial['rt'] = self.wait_response(self.ttl_clock.get_time(), trial['question_dur'])
-        trial['correct'] = (trial['response'] == trial['trial_type'])
-
-        # display trial feedback
-        if trial['display_trial_feedback']:
-            # show feedback, then let the schedule absorb any remaining time
-            self.display_trial_feedback(True, trial['correct'])
-        else:
-            # no feedback: go BLANK immediately and stay blank until end_time (we don't want the fixation cross here)
-            self.window.flip(clearBuffer=True)
-            while self.ttl_clock.get_time() < trial['end_time']:
-                # flip blank frames so the window stays responsive
-                self.window.flip()
-                self.ttl_clock.update()
-
         return trial

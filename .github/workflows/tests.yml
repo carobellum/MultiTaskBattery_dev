@@ -34,8 +34,17 @@ jobs:
       - name: Install MTB
         run: |
           python -m pip install --upgrade pip
-          python install.py
+          pip install -e .
           pip install pytest
+
+      # task stimuli from Zenodo, kept between runs so they download only once
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/MultiTaskBattery
+          key: stimuli-${{ hashFiles('MultiTaskBattery/fetch.py') }}
+
+      - name: Fetch stimuli
+        run: mtb fetch
 
       - name: Run smoke tests
         # PsychoPy hides all speakers when GITHUB_WORKFLOW is set; unset it so the null sink is used
